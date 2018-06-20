@@ -2,6 +2,19 @@
 {% block content %}
 <head>
   <style>
+  .table{
+    padding-left: 20%;
+    margin-bottom: 0;
+    background-color: white;
+  }
+  .table-container{
+    margin-top: 5%;
+    margin-left: 20%;
+    background-color: black;
+    padding-top: 2%;
+    padding-right: 5%;
+    padding-bottom: 2%;
+  }
   .btn {
       font-size: 18px;
       border-radius: 0;
@@ -14,8 +27,8 @@
     }
   .box-wrapper {
       width: 450px;
-      margin: 0 auto;
-      margin-top: 15%;
+      margin-left: 25%;
+      margin-top: 5%;
       background-color: #dbdbdb;
   }
   .box.box-border {
@@ -34,6 +47,7 @@
   font-family: 'Raleway';
   color: #000;
   margin: 10px 0;
+  margin-left: 17%;
   }
 .form-control {
       border: 1px solid #ccc;
@@ -49,7 +63,7 @@
 .diff{
   margin-top: 2%;
   width: 390px;
-  margin-left: 33%;
+  margin-left: 27.5%;
 }
 </style>
 </head>
@@ -86,5 +100,29 @@
             </div>
             <div class="diff">
               <a class="btn btn-primary btn-block" href="{% url 'form2'%}">Set Order</a>
-            </div>
-            {% endblock %}
+            </div></div>
+<div class="table-container">
+            <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>SKU</th>
+        <th>Model</th>
+        <th>Variant</th>
+        <th>Color</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        {% for key in view %}
+        <th>{{key.SKU}}</th>
+        <th>{{key.model}}</th>
+        <th>{{key.variant}}</th>
+        <th>{{key.color}}</th>
+        <th>Description</th>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

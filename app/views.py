@@ -18,7 +18,8 @@ def form1(request):
                 form = form.save()
                 form.save()
     form = Form1()
-    return render_to_response( 'app/form1.html',{'form':form}, RequestContext(request))
+    view = Config.objects.all().values()
+    return render_to_response( 'app/form1.html',{'form':form, 'view':view}, RequestContext(request))
 
 @csrf_exempt
 def form2(request):
