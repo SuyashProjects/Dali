@@ -1,0 +1,90 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<head>
+  <style>
+  .btn {
+      font-size: 18px;
+      border-radius: 0;
+      padding-left: 20px;
+      padding-right: 20px;
+      border-color: transparent;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      letter-spacing: .5px;
+    }
+  .box-wrapper {
+      width: 450px;
+      margin: 0 auto;
+      margin-top: 15%;
+      background-color: #dbdbdb;
+  }
+  .box.box-border {
+      box-shadow: none;
+      border: 1px solid #f2f2f2;
+  }
+  .box .box-body {
+      padding: 30px;
+  }
+  .box .box-body h4 {
+      margin-bottom: 5%;
+  }
+  h4 {
+  font-size: 26px;
+  font-weight: bold;
+  font-family: 'Raleway';
+  color: #000;
+  margin: 10px 0;
+  }
+.form-control {
+      border: 1px solid #ccc;
+      border-radius: 0;
+    }
+.form-group label.fw {
+    display: block;
+    margin-top: 5%;
+  }
+.form-group{
+      margin-bottom: 20px;
+}
+.diff{
+  margin-top: 2%;
+  width: 390px;
+  margin-left: 33%;
+}
+</style>
+</head>
+<div class="container">
+				<div class="box-wrapper">
+					<div class="box box-border">
+						<div class="box-body">
+							<h4>SKU Configuration</h4>
+              <form method="POST" id="post-form">{% csrf_token %}
+								<div class="form-group">
+									<label>Model</label>
+									<input type="text" name="model" class="form-control">
+								</div>
+								<div class="form-group">
+									<label>Variant</label>
+								<input type="text" name="variant" class="form-control">
+								</div>
+                <div class="form-group">
+                <label>Color</label>
+                <input type="text" name="color" class="form-control">
+              </div>
+            <div class="form-group">
+            <label>Fuel Tank</label>
+            <input type="text" name="tank" class="form-control">
+          </div>
+          <div class="form-group">
+          <label>Line TAKT Time</label>
+          <input type="number" name="time" class="form-control">
+        </div>
+									<button class="btn btn-primary btn-block">Submit</button>
+								</div>
+            </form>
+            </div>
+            </div>
+            <div class="diff">
+              <a class="btn btn-primary btn-block" href="{% url 'form2'%}">Set Order</a>
+            </div>
+            {% endblock %}

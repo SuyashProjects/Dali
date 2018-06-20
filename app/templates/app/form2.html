@@ -1,0 +1,150 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<head>
+  <style>
+  .btn {
+      font-size: 18px;
+      border-radius: 0;
+      padding-left: 20px;
+      padding-right: 20px;
+      border-color: transparent;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      letter-spacing: .5px;
+    }
+  .box-wrapper {
+      width: 450px;
+      margin: 0 auto;
+      margin-top: 15%;
+      background-color: #dbdbdb;
+  }
+  .box.box-border {
+      box-shadow: none;
+      border: 1px solid #f2f2f2;
+      margin-top: -20%;
+  }
+  .box .box-body {
+      padding: 30px;
+  }
+  .box .box-body h4 {
+      margin-bottom: 5%;
+  }
+  h4 {
+  font-size: 26px;
+  font-weight: bold;
+  font-family: 'Raleway';
+  color: #000;
+  margin: 10px 0;
+  }
+.form-control {
+      border: 1px solid #ccc;
+      border-radius: 0;
+    }
+.form-group label.fw {
+    display: block;
+    margin-top: 5%;
+  }
+.form-group{
+      margin-bottom: 20px;
+}
+.checkbox{
+  margin-left: 5%;
+  font-size: 18px;
+  color: darkslategrey;
+}
+</style>
+</head>
+<div class="container">
+				<div class="box-wrapper">
+					<div class="box box-border">
+						<div class="box-body">
+							<h4>Place Your Order</h4>
+              <form method="POST" id="post-form">{% csrf_token %}
+                <div class="form-group">
+									<label>SKU</label>
+                  <select class="form-control" ><option value="">Select SKU</option>
+                  {% for config in config %}
+                  <div id="input">
+                  <option value="{{config.SKU}}">{{config.SKU}}</option></div>
+                  {% endfor %}
+                  </select>
+								</div>
+								<div class="form-group">
+									<label>Model</label>
+                  <select class="form-control" ><option value="">Select Model</option>
+                  {% for config in config %}
+                  <div id="model">
+                  <option value="{{config.SKU}}">{{config.model}}</option></div>
+                  {% endfor %}
+                  </select>
+								</div>
+								<div class="form-group">
+									<label>Variant</label>
+                  <select class="form-control" ><option value="">Select Variant</option>
+                  {% for config in config %}
+                  <div id="variant">
+                  <option value="{{config.SKU}}">{{config.variant}}</option></div>
+                  {% endfor %}
+                  </select>
+								</div>
+                <div class="form-group">
+                <label>Color</label>
+                <select class="form-control" ><option value="">Select Color</option>
+                {% for config in config %}
+                <div id="color">
+                <option value="{{config.SKU}}">{{config.color}}</option></div>
+                {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+              <label>Fuel Tank</label>
+              <select class="form-control" ><option value="">Select Type</option>
+              {% for config in config %}
+              <option value="{{config.SKU}}">{{config.tank}}</option></select>
+              {% endfor %}
+            </div>
+            <div class="form-group">
+            <label>Quantity</label>
+            <input type="text" name="quantity" class="form-control">
+          </div>
+          <div class="form-group">
+          <label>Constraints</label>
+          <div class="checkbox">
+          <input type="checkbox" name="constraints" value="SKU cant be consecutive" >SKU cant be consecutive</div>
+          <div class="checkbox">
+          <input type="checkbox" name="constraints" value="Minimize Color changes in paint shop" >Minimize Color changes in paint shop</div>
+          <div class="checkbox">
+          <input type="checkbox" name="constraints" value="Maximize use of petrol tank trolleys">Maximize use of petrol tank trolleys</div>
+            </div>
+            <div class="form-group">
+              <a class="btn btn-primary btn-block" href="{% url 'form1'%}">Back To Config</a>
+            </div>
+								<div class="form-group">
+									<button class="btn btn-primary btn-block">Submit</button>
+								</div>
+            </form>
+            </div>
+            </div>
+            </div>
+            </div>
+            {% endblock %}
+            {% block javascript %}
+             <script>
+               $("#input").change(function () {
+                 var sku = $('#input').val();
+                  console.log( $(this).val() );
+                $.ajax({
+                  url: '/ajax/populate/',
+                  data: {
+                    'sku': sku
+                  },
+                  dataType: 'json',
+                  success: function (data) {
+                     $("#id_model").html(data),
+                     $("#id_variant").html(data),
+                     $("#id_color").html(data)
+                  }
+                });
+              });
+            </script>
+            {% endblock %}
