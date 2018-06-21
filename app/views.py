@@ -4,6 +4,7 @@ from .models import Config
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import Form1,Form2
+from django.http import JsonResponse
 
 @csrf_exempt
 def form1(request):
@@ -27,7 +28,6 @@ def form1(request):
           else:
                   form = form.save()
                   form.save()
-
     form = Form1()
     view = Config.objects.all().values()
     return render_to_response( 'app/form1.html',{'form':form, 'view':view}, RequestContext(request))
@@ -46,12 +46,23 @@ def form2(request):
 
 def populate(request):
     sku = request.GET.get('sku', None)
-    model = Config.objects.filter(sku=sku).only('model')
-    variant = Config.objects.filter(sku=sku).only('varaint')
-    color = Config.objects.filter(sku=sku).only('color')
-    data = {
-        'model' : model,
-        'variant' : variant,
-        'color' : color
-        }
-    return JsonResponse(data)
+    view = Config.objects.filter(SKU=sku).values()
+    return render_to_response( 'app/SKU.html',{'view':view}, RequestContext(request))
+
+def populate_variant(request):
+    model = request.GET.get('model', None)
+    view = Config.objects.filter(model=model).values()
+    return render_to_response( 'app/variant.html',{'view':view}, RequestContext(request))
+
+def populate_color(request):
+    model = request.GET.get('model', None)
+    variant = request.GET.get('variant', None)
+    view = Config.objects.filter(model=model,variant=variant).values()
+    return render_to_response( 'app/color.html',{'view':view}, RequestContext(request))
+
+def populate_tank(request):
+    model = request.GET.get('model', None)
+    variant = request.GET.get('variant', None)
+    color = request.GET.get('color', None)
+    view = Config.objects.filter(model=model,variant=variant,color=color).values()
+    return render_to_response( 'app/tank.html',{'view':view}, RequestContext(request))

@@ -61,7 +61,7 @@
 							<h4>Place Your Order</h4>
               <form method="POST" id="post-form">{% csrf_token %}
                 <div class="form-group">
-                <label>Enter SKU Number</label>
+                <label>Enter SKU Number (Optional)</label>
                 {{ form.non_field_errors }}
                 <div class="fieldWrapper">
                 {{ form.SKU.errors }}
@@ -71,7 +71,7 @@
               <div class="form-group">
               <label>Model</label>
               {{ form.non_field_errors }}
-              <div id="model" class="fieldWrapper">
+              <div class="fieldWrapper">
               {{ form.tank.errors }}
               {{ form.model }}
             </div>
@@ -79,7 +79,7 @@
             <div class="form-group">
             <label>Variant</label>
             {{ form.non_field_errors }}
-            <div id="variant" class="fieldWrapper">
+            <div class="fieldWrapper">
             {{ form.tank.errors }}
             {{ form.variant }}
           </div>
@@ -127,4 +127,43 @@
             </div>
             {% endblock %}
             {% block javascript %}
+<script>
+var model;
+var variant;
+  $("#id_model").change(function () {
+    model = $(this).val();  // get the selected country ID from the HTML input
+    $.ajax({                       // initialize an AJAX request
+      url: '/ajax/populate_variant/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+      data: {'model': model       // add the country id to the GET parameters
+      },
+      success: function (data) {
+        console.log(data)  // `data` is the return of the `load_cities` view function
+        $("#id_variant").html(data);  // replace the contents of the city input with the data that came from the server
+}});});
+
+$("#id_variant").change(function () {
+  variant = $(this).val();  // get the selected country ID from the HTML input
+$.ajax({                       // initialize an AJAX request
+url: '/ajax/populate_color/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+data: {'model': model,
+       'variant': variant,     // add the country id to the GET parameters
+},
+success: function (data) {
+console.log(data)  // `data` is the return of the `load_cities` view function
+$("#id_color").html(data);  // replace the contents of the city input with the data that came from the server
+}});});
+
+$("#id_color").change(function () {
+  color = $(this).val();  // get the selected country ID from the HTML input
+$.ajax({                       // initialize an AJAX request
+url: '/ajax/populate_tank/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+data: {'model': model,
+       'variant': variant,
+       'color': color,     // add the country id to the GET parameters
+},
+success: function (data) {
+console.log(data)  // `data` is the return of the `load_cities` view function
+$("#id_tank").html(data);  // replace the contents of the city input with the data that came from the server
+}});});
+</script>
             {% endblock %}
