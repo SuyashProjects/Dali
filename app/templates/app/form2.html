@@ -14,7 +14,7 @@
     }
   .box-wrapper {
       width: 450px;
-      margin: 0 auto;
+      margin-left: 42%;
       margin-top: 15%;
       background-color: #dbdbdb;
   }
@@ -61,51 +61,52 @@
 							<h4>Place Your Order</h4>
               <form method="POST" id="post-form">{% csrf_token %}
                 <div class="form-group">
-									<label>SKU</label>
-                  <select class="form-control" ><option value="">Select SKU</option>
-                  {% for config in config %}
-                  <div id="input">
-                  <option value="{{config.SKU}}">{{config.SKU}}</option></div>
-                  {% endfor %}
-                  </select>
-								</div>
-								<div class="form-group">
-									<label>Model</label>
-                  <select class="form-control" ><option value="">Select Model</option>
-                  {% for config in config %}
-                  <div id="model">
-                  <option value="{{config.SKU}}">{{config.model}}</option></div>
-                  {% endfor %}
-                  </select>
-								</div>
-								<div class="form-group">
-									<label>Variant</label>
-                  <select class="form-control" ><option value="">Select Variant</option>
-                  {% for config in config %}
-                  <div id="variant">
-                  <option value="{{config.SKU}}">{{config.variant}}</option></div>
-                  {% endfor %}
-                  </select>
-								</div>
-                <div class="form-group">
-                <label>Color</label>
-                <select class="form-control" ><option value="">Select Color</option>
-                {% for config in config %}
-                <div id="color">
-                <option value="{{config.SKU}}">{{config.color}}</option></div>
-                {% endfor %}
-                </select>
+                <label>Enter SKU Number</label>
+                {{ form.non_field_errors }}
+                <div class="fieldWrapper">
+                {{ form.SKU.errors }}
+                {{ form.SKU }}
+                </div>
               </div>
               <div class="form-group">
-              <label>Fuel Tank</label>
-              <select class="form-control" ><option value="">Select Type</option>
-              {% for config in config %}
-              <option value="{{config.SKU}}">{{config.tank}}</option>
-              {% endfor %}</select>
+              <label>Model</label>
+              {{ form.non_field_errors }}
+              <div id="model" class="fieldWrapper">
+              {{ form.tank.errors }}
+              {{ form.model }}
+            </div>
             </div>
             <div class="form-group">
-            <label>Quantity</label>
-            <input type="text" name="quantity" class="form-control">
+            <label>Variant</label>
+            {{ form.non_field_errors }}
+            <div id="variant" class="fieldWrapper">
+            {{ form.tank.errors }}
+            {{ form.variant }}
+          </div>
+          </div>
+          <div class="form-group">
+          <label>Color</label>
+          {{ form.non_field_errors }}
+          <div class="fieldWrapper">
+          {{ form.tank.errors }}
+          {{ form.color }}
+        </div>
+        </div>
+              <div class="form-group">
+              <label>Fuel Tank Type</label>
+              {{ form.non_field_errors }}
+              <div class="fieldWrapper">
+              {{ form.tank.errors }}
+              {{ form.tank }}
+            </div>
+            </div>
+            <div class="form-group">
+                <label>Quantity</label>
+                {{ form.non_field_errors }}
+              <div class="fieldWrapper">
+              {{ form.quantity.errors }}
+              {{ form.quantity }}
+              </div>
           </div>
           <div class="form-group">
           <label>Constraints</label>
@@ -115,9 +116,6 @@
           <input type="checkbox" name="constraints" value="Minimize Color changes in paint shop" >Minimize Color changes in paint shop</div>
           <div class="checkbox">
           <input type="checkbox" name="constraints" value="Maximize use of petrol tank trolleys">Maximize use of petrol tank trolleys</div>
-            </div>
-            <div class="form-group">
-              <a class="btn btn-primary btn-block" href="{% url 'form1'%}">Back To Config</a>
             </div>
 								<div class="form-group">
 									<button class="btn btn-primary btn-block">Submit</button>
@@ -129,22 +127,4 @@
             </div>
             {% endblock %}
             {% block javascript %}
-             <script>
-               $("#input").change(function () {
-                 var sku = $('#input').val();
-                  console.log( $(this).val() );
-                $.ajax({
-                  url: '/ajax/populate/',
-                  data: {
-                    'sku': sku
-                  },
-                  dataType: 'json',
-                  success: function (data) {
-                     $("#id_model").html(data),
-                     $("#id_variant").html(data),
-                     $("#id_color").html(data)
-                  }
-                });
-              });
-            </script>
             {% endblock %}

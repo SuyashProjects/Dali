@@ -14,9 +14,20 @@ def form1(request):
           model = Obj['model']
           variant = Obj['variant']
           color = Obj['color']
-          if not (Config.objects.filter(model=model).exists() and Config.objects.filter(variant=variant).exists() and Config.objects.filter(color=color).exists()):
-                form = form.save()
-                form.save()
+          if (Config.objects.filter(model=model).exists()):
+            if (Config.objects.filter(variant=variant).exists()):
+              if (Config.objects.filter(color=color).exists()):
+                  print('sku exists')
+              else:
+                  form = form.save()
+                  form.save()
+            else:
+                  form = form.save()
+                  form.save()
+          else:
+                  form = form.save()
+                  form.save()
+
     form = Form1()
     view = Config.objects.all().values()
     return render_to_response( 'app/form1.html',{'form':form, 'view':view}, RequestContext(request))
@@ -29,10 +40,9 @@ def form2(request):
         form = form.save()
         form.save()
       else:
-        print('error')
+          print('error')
     form = Form2()
-    config = Config.objects.only('model','variant','color')
-    return render_to_response( 'app/form2.html',{'form':form,'config':config}, RequestContext(request))
+    return render_to_response( 'app/form2.html',{'form':form}, RequestContext(request))
 
 def populate(request):
     sku = request.GET.get('sku', None)
