@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response,redirect,render
 from django.utils import timezone
-from .models import Config
+from .models import Config,Constraint
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import Form1,Form2
@@ -15,16 +15,8 @@ def form1(request):
           model = Obj['model']
           variant = Obj['variant']
           color = Obj['color']
-          if (Config.objects.filter(model=model).exists()):
-            if (Config.objects.filter(variant=variant).exists()):
-              if (Config.objects.filter(color=color).exists()):
+          if (Config.objects.filter(model=model, variant=variant,color=color).exists()):
                   print('sku exists')
-              else:
-                  form = form.save()
-                  form.save()
-            else:
-                  form = form.save()
-                  form.save()
           else:
                   form = form.save()
                   form.save()
@@ -47,7 +39,7 @@ def form2(request):
 def populate(request):
     sku = request.GET.get('sku', None)
     view = Config.objects.filter(SKU=sku).values()
-    return render_to_response( 'app/SKU.html',{'view':view}, RequestContext(request))
+    return render_to_response( 'app/populate.html',{'view':view}, RequestContext(request))
 
 def populate_variant(request):
     model = request.GET.get('model', None)

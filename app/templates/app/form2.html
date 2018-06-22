@@ -59,7 +59,7 @@
 					<div class="box box-border">
 						<div class="box-body">
 							<h4>Place Your Order</h4>
-              <form method="POST" id="post-form">{% csrf_token %}
+              <form method="POST">{% csrf_token %}
                 <div class="form-group">
                 <label>Enter SKU Number (Optional)</label>
                 {{ form.non_field_errors }}
@@ -109,14 +109,13 @@
               </div>
           </div>
           <div class="form-group">
-          <label>Constraints</label>
-          <div class="checkbox">
-          <input type="checkbox" name="constraints" value="SKU cant be consecutive" >SKU cant be consecutive</div>
-          <div class="checkbox">
-          <input type="checkbox" name="constraints" value="Minimize Color changes in paint shop" >Minimize Color changes in paint shop</div>
-          <div class="checkbox">
-          <input type="checkbox" name="constraints" value="Maximize use of petrol tank trolleys">Maximize use of petrol tank trolleys</div>
+              <label>Constraints</label>
+              {{ form.non_field_errors }}
+            <div class="fieldWrapper">
+            {{ form.constraints.errors }}
+            {{ form.constraints }}
             </div>
+        </div>
 								<div class="form-group">
 									<button class="btn btn-primary btn-block">Submit</button>
 								</div>
@@ -130,6 +129,19 @@
 <script>
 var model;
 var variant;
+var color;
+
+$("#id_SKU").change(function () {
+  sku = $(this).val();  // get the selected country ID from the HTML input
+  $.ajax({                       // initialize an AJAX request
+    url: '/ajax/populate/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+    data: {'sku': sku      // add the country id to the GET parameters
+    },
+    success: function (data) {
+      console.log(data)  // `data` is the return of the `load_cities` view function
+      $("#id_model").html(data);  // replace the contents of the city input with the data that came from the server
+}});});
+
   $("#id_model").change(function () {
     model = $(this).val();  // get the selected country ID from the HTML input
     $.ajax({                       // initialize an AJAX request

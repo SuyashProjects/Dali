@@ -1,5 +1,5 @@
 from django import forms
-from .models import Config
+from .models import Config,Constraint
 
 class Form1(forms.ModelForm):
     model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -20,7 +20,7 @@ class Form2(forms.ModelForm):
        self.fields['color'].empty_label = "Select Variant First "
        self.fields['color'].queryset = Config.objects.none()
        self.fields['tank'].empty_label = "Select Color First"
-       self.fields['color'].queryset = Config.objects.none()
+       self.fields['tank'].queryset = Config.objects.none()
        if 'model' in self.data:
             try:
                 model = int(self.data.get('model'))
@@ -29,12 +29,15 @@ class Form2(forms.ModelForm):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
        elif self.instance.pk:
             self.fields['variant'].queryset = self.instance.model.variant_set.order_by('name')
+
     SKU = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}),required=False)
     model = forms.ModelChoiceField(queryset=Config.objects.values_list('model', flat=True),widget=forms.Select(attrs={'class':'form-control'}))
     variant = forms.ModelChoiceField(queryset=Config.objects.values_list('variant', flat=True),widget=forms.Select(attrs={'class':'form-control'}))
     color = forms.ModelChoiceField(queryset=Config.objects.values_list('color', flat=True),widget=forms.Select(attrs={'class':'form-control'}))
     tank = forms.ModelChoiceField(queryset=Config.objects.values_list('tank', flat=True),widget=forms.Select(attrs={'class':'form-control'}))
     quantity = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    constraints = forms.ModelMultipleChoiceField(queryset=Constraint.objects.values_list('name', flat=True), widget=forms.CheckboxSelectMultiple())
+
 
     class Meta:
         model = Config
