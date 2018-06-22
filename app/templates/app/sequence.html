@@ -1,5 +1,23 @@
-<html>
-
-
-
-</html>
+{% extends 'app/base.html' %}
+{% block content %}
+<head>
+<style>
+</style>
+</head>
+<div class="table-container">
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Sequence No.</th>
+        <th>SKU</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Seq_Num</th>
+        <th>Seq_SKU</th>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endfor %}
