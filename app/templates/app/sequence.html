@@ -1,6 +1,23 @@
 {% extends 'app/base.html' %}
 <head>
 <style>
+.table{
+  padding-left: 20%;
+  margin-bottom: 0;
+  background-color: white;
+}
+.table-container{
+  margin-left: -.5%;
+  margin-top: 2%;
+  padding-left: 22%;
+  background-color: #222222;
+  padding-top: 1.5%;
+  padding-right: 1.5%;
+  padding-bottom: 9.3%;
+}
+.table table-bordered{
+    width: 50%;
+}
 </style>
 </head>
 {% block content %}
@@ -8,15 +25,25 @@
 <table class="table table-bordered">
     <thead>
       <tr>
-        <th>Sequence No.</th>
+        <th>Order ID</th>
         <th>SKU</th>
+        <th>Model</th>
+        <th>Variant</th>
+        <th>Color</th>
+        <th>Tank</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-        {% for key in Seq_Num %}
-        <td>{{ key }}</td>
-        <td>{{ Seq_SKU }}</td>
+        {% for key,value in Sequence %}
+        <td>OR_{{ key }}</td>
+        {% for value in value %}
+        <td>{{ value.SKU }}</td>
+        <td>{{ value.model }}</td>
+        <td>{{ value.variant }}</td>
+        <td>{{ value.color }}</td>
+        <td>{{ value.tank }}</td>
+        {% endfor%}
       </tr>
       {% endfor %}
     </tbody>

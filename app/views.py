@@ -50,20 +50,17 @@ def sequence(request):
       Seq_Num=[]
       Seq_SKU=[]
       Sequence={}
+      Ratio=[1,2,3]
       for i in range(0,SKU_Count):
-          SKU_Number=Config.objects.filter(SKU=i+1).values('SKU')[0]
-          print(SKU_Number)
-          SKU_Number = SKU_Number['SKU']
+          SKU=Config.objects.filter(SKU=i+1).values()
           query=Config.objects.filter(SKU=i+1).values('quantity')[0]
-          print(query)
           Quant = query['quantity']
-          print (Quant)
+          for x in range(0,Total_Order):
+           Seq_Num.append(x+1)
           for x in range(0,Quant):
-              Seq_Num.append(x+1)
-              Seq_SKU.append(SKU_Number)
-          print(Seq_Num)
-          print(Seq_SKU)
-    return render_to_response( 'app/sequence.html',{'Seq_Num':Seq_Num,'Seq_SKU':Seq_SKU}, RequestContext(request))
+              Seq_SKU.append(SKU)
+          Sequence = list(zip(Seq_Num,Seq_SKU))
+    return render_to_response( 'app/sequence.html',{'Sequence':Sequence}, RequestContext(request))
 
 def populate(request):
     sku = request.GET.get('sku', None)
