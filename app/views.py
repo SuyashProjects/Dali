@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import Form1,Form2
 from django.http import JsonResponse
-from django.db.models import Sum,Max
+from django.db.models import Sum,Max,Count
 
 @csrf_exempt
 def form1(request):
@@ -40,25 +40,29 @@ def form2(request):
 def sequence(request):
     Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
     Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
+    SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
     Total_Shift_Time=8
     Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
     if(Total_Order>Capacity):
       print('Capacity is being exceeded, reduce orders!')
     else:
       print('Orders are within Capacity, Sequencing can now be started!')
-      j=0
-      Seq_Num=[Total_Order]
-      Seq_SKU=[Total_Order]
-      for i in range(1,Total_Order):
-          SKU_Number=Config.objects.filter(SKU=i).values()
-          query=Config.objects.filter(SKU=i).values('quantity')
+      Seq_Num=[]
+      Seq_SKU=[]
+      Sequence={}
+      for i in range(0,SKU_Count):
+          SKU_Number=Config.objects.filter(SKU=i+1).values('SKU')[0]
+          print(SKU_Number)
+          SKU_Number = SKU_Number['SKU']
+          query=Config.objects.filter(SKU=i+1).values('quantity')[0]
           print(query)
           Quant = query['quantity']
-          while Quant!=0:
-              Seq_Num[j]=j+1
-              Seq_SKU[j]=SKU_Number
-              Quant=Quant-1
-              j=j+1
+          print (Quant)
+          for x in range(0,Quant):
+              Seq_Num.append(x+1)
+              Seq_SKU.append(SKU_Number)
+          print(Seq_Num)
+          print(Seq_SKU)
     return render_to_response( 'app/sequence.html',{'Seq_Num':Seq_Num,'Seq_SKU':Seq_SKU}, RequestContext(request))
 
 def populate(request):

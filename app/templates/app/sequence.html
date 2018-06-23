@@ -1,10 +1,10 @@
 {% extends 'app/base.html' %}
-{% block content %}
 <head>
 <style>
 </style>
 </head>
-<div class="table-container">
+{% block content %}
+<div class="table-container" style="margin-left:20%;">
 <table class="table table-bordered">
     <thead>
       <tr>
@@ -13,11 +13,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th>Seq_Num</th>
-        <th>Seq_SKU</th>
+        <tr>
+        {% for key in Seq_Num %}
+        <td>{{ key }}</td>
+        <td>{{ Seq_SKU }}</td>
       </tr>
+      {% endfor %}
     </tbody>
   </table>
 </div>
-{% endfor %}
+{% endblock %}
