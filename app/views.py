@@ -30,8 +30,14 @@ def form2(request):
     if request.method == 'POST':
       form = Form2(request.POST)
       if form.is_valid():
-        form = form.save()
-        form.save()
+        Obj = form.cleaned_data
+        SKU = Obj['SKU']
+        model = Obj['model']
+        variant = Obj['variant']
+        color = Obj['color']
+        tank = Obj['tank']
+        quantity = Obj['quantity']
+        Config.objects.filter(SKU=SKU,model=model,variant=variant,tank=tank).update(quantity=quantity)
       else:
           print('error')
     form = Form2()

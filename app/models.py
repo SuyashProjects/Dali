@@ -15,7 +15,7 @@ class Config(models.Model):
     variant = models.CharField(max_length=50)
     color = models.CharField(max_length=50)
     quantity = models.IntegerField(blank=True,null=True)
-    time = models.IntegerField()
+    time = models.IntegerField(null=True)
     constraints = models.ManyToManyField(Constraint, related_name='Constraint',blank=True)
     tank = models.CharField(max_length=50)
     def submit(self):
