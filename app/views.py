@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import Form1,Form2
 from django.http import JsonResponse
-from django.db.models import Sum,Max,Count
+from django.db.models import Sum,Max,Count,Min
 
 @csrf_exempt
 def form1(request):
@@ -41,6 +41,7 @@ def sequence(request):
     Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
     Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
     SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
+    Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
     Total_Shift_Time=8
     Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
     if(Total_Order>Capacity):
@@ -50,7 +51,6 @@ def sequence(request):
       Seq_Num=[]
       Seq_SKU=[]
       Sequence={}
-      Ratio=[1,2,3]
       for i in range(0,SKU_Count):
           SKU=Config.objects.filter(SKU=i+1).values()
           query=Config.objects.filter(SKU=i+1).values('quantity')[0]
