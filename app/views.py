@@ -16,7 +16,7 @@ def form1(request):
           model = Obj['model']
           variant = Obj['variant']
           color = Obj['color']
-          if (Config.objects.filter(model=model, variant=variant,color=color).exists()):
+          if (Config.objects.filter(model=model,variant=variant,color=color).exists()):
                   print('sku exists')
           else:
                   form = form.save()
@@ -34,8 +34,7 @@ def form2(request):
         SKU = Obj['SKU']
         quantity = Obj['quantity']
         ratio = Obj['ratio']
-        Config.objects.filter(SKU=SKU).update(quantity=quantity)
-        Config.objects.filter(SKU=SKU).update(ratio=ratio)
+        Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio)
       else:
           print('error')
     form = Form2()
