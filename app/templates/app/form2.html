@@ -2,128 +2,96 @@
 {% block content %}
 <head>
   <style>
-  .btn {
-      font-size: 18px;
-      border-radius: 0;
-      padding-left: 20px;
-      padding-right: 20px;
-      border-color: transparent;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      letter-spacing: .5px;
-    }
-  .box-wrapper {
-      width: 450px;
-      margin-left: 42%;
-      margin-top: 15%;
-      background-color: #dbdbdb;
-  }
-  .box.box-border {
-      box-shadow: none;
-      border: 1px solid #f2f2f2;
-      margin-top: -20%;
-  }
-  .box .box-body {
-      padding: 30px;
-  }
-  .box .box-body h4 {
-      margin-bottom: 5%;
-  }
-  h4 {
-  font-size: 26px;
-  font-weight: bold;
-  font-family: 'Raleway';
-  color: #000;
-  margin: 10px 0;
-  }
-.form-control {
-      border: 1px solid #ccc;
-      border-radius: 0;
-    }
-.form-group label.fw {
-    display: block;
-    margin-top: 5%;
-  }
-.form-group{
-      margin-bottom: 20px;
+.bar{
+width:100%;
+height:auto;
+padding-top: 10px;
 }
-.checkbox{
-  margin-left: 5%;
-  font-size: 18px;
-  color: darkslategrey;
+.heading{
+width:20%;
+height:auto;
+margin:0 auto 0;
+font-size: 30px;
+font-weight: bold;
+color: white;
 }
+.ccontainer{
+margin-top: 35px;
+width:100%;
+height:auto;
+}
+.cform{
+background-color: #416E8B;
+margin:0 auto 0;
+width:80%;
+height: auto;
+color: #EEEEEE !important;
+padding: 18px;
+text-align: left;
+border-radius: 2px;
+font-size:16px;
+}
+.table-wrapper-2 {
+display: block;
+max-height: 300px;
+overflow-y: auto;
+-ms-overflow-style: -ms-autohiding-scrollbar;
+}
+.cbutton{
+width:auto;
+padding-left:1% ;
+padding-right: 1%;
+background-color:#C0C0C0;
+color:black;
+margin-left:92%;
+  }
 </style>
 </head>
-<div class="container">
-				<div class="box-wrapper">
-					<div class="box box-border">
-						<div class="box-body">
-							<h4>Place Your Order</h4>
-              <form method="POST">{% csrf_token %}
-                <div class="form-group">
-                <label>Enter SKU Number (Optional)</label>
-                {{ form.non_field_errors }}
-                <div class="fieldWrapper">
-                {{ form.SKU.errors }}
-                {{ form.SKU }}
-                </div>
-              </div>
-              <div class="form-group">
-              <label>Model</label>
-              {{ form.non_field_errors }}
-              <div class="fieldWrapper">
-              {{ form.model.errors }}
-              {{ form.model }}
-            </div>
-            </div>
-            <div class="form-group">
-            <label>Variant</label>
-            {{ form.non_field_errors }}
-            <div class="fieldWrapper">
-            {{ form.variant.errors }}
-            {{ form.variant }}
-          </div>
-          </div>
-          <div class="form-group">
-          <label>Color</label>
-          {{ form.non_field_errors }}
-          <div class="fieldWrapper">
-          {{ form.color.errors }}
-          {{ form.color }}
-        </div>
-        </div>
-              <div class="form-group">
-              <label>Fuel Tank Type</label>
-              {{ form.non_field_errors }}
-              <div class="fieldWrapper">
-              {{ form.tank.errors }}
-              {{ form.tank }}
-            </div>
-            </div>
-            <div class="form-group">
-                <label>Quantity</label>
-                {{ form.non_field_errors }}
-              <div class="fieldWrapper">
-              {{ form.quantity.errors }}
-              {{ form.quantity }}
-              </div>
-          </div>
-          <div class="form-group">
-              <label>Constraints</label>
-              {{ form.non_field_errors }}
-            <div class="fieldWrapper">
-            {{ form.constraints.errors }}
-            {{ form.constraints }}
-            </div>
-        </div>
-								<div class="form-group">
-									<button class="btn btn-primary btn-block">Submit</button>
-								</div>
-            </form>
-            </div>
-            </div>
-            </div>
-            </div>
+
+<!--Heading-->
+<div class="bar">
+<div class="heading">
+SKU  Configuration
+</div>
+</div>
+<!--End of Heading-->
+
+<!--Start of Form-->
+<div class="ccontainer">
+<div class="cform">
+     <form method="POST">{% csrf_token %}
+     <div class="form-group row" style="margin-left:0 auto 0;">
+       <div class="col-xs-2">
+         <label>Enter SKU</label>
+         {{ form.non_field_errors }}
+         <div class="fieldWrapper">
+         {{ form.SKU.errors }}
+         {{ form.SKU }}
+       </div>
+       </div>
+         <div class="col-xs-2">
+           <label>Quantity</label>
+           {{ form.non_field_errors }}
+           <div class="fieldWrapper">
+           {{ form.quantity.errors }}
+           {{ form.quantity }}
+         </div>
+       </div></div>
+       <div class="row">
+       <div class="col-xs-2">
+         <label>Constraints</label>
+         {{ form.non_field_errors }}
+         <div class="fieldWrapper">
+         {{ form.constraints.errors }}
+         {{ form.constraints }}
+       </div>
+     </div>
+     </div>
+<button type="submit" class="btn cbutton">Add New</button>
+</form>
+</div>
+<!--End of form-->
+<!--Start of Table-->
             {% endblock %}
             {% block javascript %}
 <script>
