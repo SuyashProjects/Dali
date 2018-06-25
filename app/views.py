@@ -57,6 +57,22 @@ def sequence(request):
       Seq_Num=[]
       Seq_SKU=[]
       Sequence={}
+      Ratio1=1
+      Ratio2=2
+      Ratio_Sum=3
+      SKU1=1
+      SKU2=2
+      Seq=[]
+      temp=[]
+      for x in range (0,Total_Order//Ratio_Sum):
+        for y in range(0,Ratio1):
+         Seq.append(SKU1)
+        for y in range(0,Ratio2):
+         Seq.append(SKU2)
+      print(Seq)
+      for value in Seq:
+          b=Config.objects.filter(SKU=value).values()
+          temp.append(b)
       for i in range(0,SKU_Count):
           SKU=Config.objects.filter(SKU=i+1).values()
           query=Config.objects.filter(SKU=i+1).values('quantity')[0]
@@ -66,7 +82,8 @@ def sequence(request):
           for x in range(0,Quant):
               Seq_SKU.append(SKU)
           Sequence = list(zip(Seq_Num,Seq_SKU))
-    return render_to_response( 'app/sequence.html',{'Sequence':Sequence}, RequestContext(request))
+      Seq = list(zip(Seq_Num,temp))
+    return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'Seq':Seq}, RequestContext(request))
 
 def populate(request):
     sku = request.GET.get('sku', None)

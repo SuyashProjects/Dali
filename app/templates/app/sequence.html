@@ -1,4 +1,4 @@
-{% extends 'app/base.html' %}
+{% extends 'app/base1.html' %}
 <head>
 <style>
 .table{
@@ -43,7 +43,35 @@
         <td>{{ value.variant }}</td>
         <td>{{ value.color }}</td>
         <td>{{ value.tank }}</td>
-        {% endfor%}
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="table-container" style="margin-left:20%;">
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>SKU</th>
+        <th>Model</th>
+        <th>Variant</th>
+        <th>Color</th>
+        <th>Tank</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+        {% for key,value in Seq %}
+        <td>OR_{{ key }}</td>
+        {% for value in value %}
+        <td>{{ value.SKU }}</td>
+        <td>{{ value.model }}</td>
+        <td>{{ value.variant }}</td>
+        <td>{{ value.color }}</td>
+        <td>{{ value.tank }}</td>
+        {% endfor %}
       </tr>
       {% endfor %}
     </tbody>

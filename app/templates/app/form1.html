@@ -2,122 +2,158 @@
 {% block content %}
 <head>
   <style>
-  .table{
-    padding-left: 20%;
-    margin-bottom: 0;
-    background-color: white;
-  }
-  .table-container{
-    margin-left: -.5%;
-    margin-top: 2%;
-    padding-left: 22%;
-    background-color: #222222;
-    padding-top: 1.5%;
-    padding-right: 1.5%;
-    padding-bottom: 9.3%;
-  }
-  .btn {
-      font-size: 18px;
-      border-radius: 0;
-      padding-left: 20px;
-      padding-right: 20px;
-      border-color: transparent;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      letter-spacing: .5px;
-      width:auto;
-    }
-  .box-wrapper {
-      width: 450px;
-      margin-left: 42%;
-      margin-top: 5%;
-      background-color: #dbdbdb;
-  }
-  .box.box-border {
-      box-shadow: none;
-      border: 1px solid #f2f2f2;
-  }
-  .box .box-body {
-      padding: 30px;
-  }
-  .box .box-body h4 {
-      margin-bottom: 5%;
-  }
-  h4 {
-  font-size: 26px;
-  font-weight: bold;
-  font-family: 'Raleway';
-  color: #000;
-  margin: 10px 0;
-  margin-left: 17%;
-  }
-.form-control {
-      border: 1px solid #ccc;
-      border-radius: 0;
-    }
-.form-group label.fw {
-    display: block;
-    margin-top: 5%;
-  }
-.form-group{
-  width: 50%;
-      margin-bottom: 20px;
+.bar{
+width:100%;
+height:auto;
+padding-top: 10px;
 }
+.heading{
+width:20%;
+height:auto;
+margin:0 auto 0;
+font-size: 30px;
+font-weight: bold;
+color: white;
+}
+.ccontainer{
+margin-top: 35px;
+width:100%;
+height:auto;
+}
+.cform{
+background-color: #416E8B;
+margin:0 auto 0;
+width:80%;
+height: auto;
+color: #EEEEEE !important;
+padding: 18px;
+text-align: left;
+border-radius: 2px;
+font-size:16px;
+}
+.table-wrapper-2 {
+display: block;
+max-height: 300px;
+overflow-y: auto;
+-ms-overflow-style: -ms-autohiding-scrollbar;
+}
+.cbutton{
+width:auto;
+padding-left:1% ;
+padding-right: 1%;
+background-color:#C0C0C0;
+color:black;
+margin-left:92%;
+  }
 </style>
 </head>
-<div class="container">
-				<div class="box-wrapper">
-					<div class="box box-border">
-						<div class="box-body">
-							<h4>SKU Configuration</h4>
-              <form method="POST" id="post-form">{% csrf_token %}
-								<div class="form-group">
-									<label>Model</label>
-									<input type="text" name="model" class="form-control">
-								</div>
-								<div class="form-group">
-									<label>Variant</label>
-								<input type="text" name="variant" class="form-control">
-								</div>
-                <div class="form-group">
-                <label>Color</label>
-                <input type="text" name="color" class="form-control">
-              </div>
-            <div class="form-group">
-            <label>Fuel Tank</label>
-            <input type="text" name="tank" class="form-control">
-          </div>
-          <div class="form-group">
-          <label>TAKT Time</label>
-          <input type="number" name="time" class="form-control">
-        </div>
-									<button class="btn btn-primary btn-block">SUBMIT</button>
-								</div>
-            </form>
-            </div>
-          </div></div>
-<div class="table-container">
-            <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>SKU</th>
-        <th>Model</th>
-        <th>Variant</th>
-        <th>Color</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        {% for key in view %}
-        <th>{{key.SKU}}</th>
-        <th>{{key.model}}</th>
-        <th>{{key.variant}}</th>
-        <th>{{key.color}}</th>
-        <th>Description</th>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+<!--Heading-->
+<div class="bar">
+<div class="heading">
+SKU  Configuration
 </div>
+</div>
+<!--End of Heading-->
+
+<!--Start of Form-->
+<div class="ccontainer">
+<div class="cform">
+     <form method="POST">{% csrf_token %}
+     <div class="form-group row" style="margin-left:0 auto 0;">
+       <div class="col-xs-2">
+         <label>Model</label>
+         {{ form.non_field_errors }}
+         <div class="fieldWrapper">
+         {{ form.model.errors }}
+         {{ form.model }}
+       </div>
+       </div>
+     <div class="col-xs-2">
+       <label>Variant</label>
+       {{ form.non_field_errors }}
+       <div class="fieldWrapper">
+       {{ form.variant.errors }}
+       {{ form.variant }}
+     </div>
+     </div>
+     <div class="col-xs-2">
+       <label>Color</label>
+       {{ form.non_field_errors }}
+       <div class="fieldWrapper">
+       {{ form.color.errors }}
+       {{ form.color }}
+     </div>
+     </div>
+     <div class="col-xs-2">
+       <label>Fuel Tank</label>
+       {{ form.non_field_errors }}
+       <div class="fieldWrapper">
+       {{ form.tank.errors }}
+       {{ form.tank }}
+     </div>
+         </div>
+         <div class="col-xs-2">
+           <label>TAKT Time</label>
+           {{ form.non_field_errors }}
+           <div class="fieldWrapper">
+           {{ form.time.errors }}
+           {{ form.time }}
+         </div>
+       </div>
+       <div class="col-xs-2">
+         <label>Additional</label>
+         {{ form.non_field_errors }}
+         <div class="fieldWrapper">
+         {{ form.description.errors }}
+         {{ form.description }}
+       </div>
+     </div>
+     </div>
+<button type="submit" class="btn cbutton">Add New</button>
+</form>
+</div>
+</div>
+<!--End of form-->
+<!--Start of Table-->
+<div class="card" style="margin-left:100px; margin-right:60px; background-color:#696969; color:white; margin-top:25px; border:solid white 2px; ">
+<div class="card-body">
+ <div class="table-wrapper-2">
+<!--Table-->
+<table class="table table-responsive-md">
+<thead class="mdb-color lighten-4" style="background-color:#363744 !important;">
+<tr>
+<th>S.No</th>
+<th class="th-lg">Model</th>
+<th class="th-lg">Variant</th>
+<th class="th-lg">Color</th>
+<th class="th-lg">Fuel Tank Type</th>
+<th class="th-lg">TAKT Time</th>
+<th class="th-lg">Additional</th>
+</tr>
+</thead>
+
+<tbody>
+  <tr>
+    {% for key in view %}
+    <th>{{key.SKU}}</th>
+    <th>{{key.model}}</th>
+    <th>{{key.variant}}</th>
+    <th>{{key.color}}</th>
+    <th>{{key.tank}}</th>
+    <th>{{key.time}}</th>
+    <th>{{key.description}}</th>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+<!--Table-->
+
+</div>
+
+</div>
+</div>
+
+
+
 {% endblock %}

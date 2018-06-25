@@ -1,61 +1,96 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
- <head>
-   <meta charset="utf-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <title>{% block title %}{% endblock %}</title>
-
-   <!-- Bootstrap -->
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-   <link rel="stylesheet" href="{% static '/css/app.css' %}">
-
-   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-   <!--[if lt IE 9]>
-     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-   <![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static '/css/app.css' %}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
 body{
+margin:0;
+width: 100%;
+height:100;
+background-image: url("{% static 'Background.png' %}") ;
+background-size: cover;
+background-color: black;
 font-family: "Lucida Sans Unicode";
 }
-.navbar-fixed-left {
- width: 20%;
- position: fixed;
- border-radius: 0;
- height: 100%;
-}
-.navbar-fixed-left .navbar-nav > li {
- float: none;  /* Cancel default li float: left */
- width: 100%;
-}
-.navbar-fixed-left + .container {
- padding-left: 160px;
-}
-.navbar
+.bnav
 {
-border: none;
+position: fixed;
+bottom: 0;
+}
+.bbutton1
+{
+background-color:olive;
+border-width:1px;
+border-style:outset;
+border-color: #a9d157;
+}
+.bgroup
+{
+padding-left:2px;
+padding-right:2px;
+font-size:16px;
+font-weight:800;
+}
+.bbutton2
+{
+background-color:#205867;
+border-width:1px;
+border-style:outset;
+border-color: #78c6db;
+}
+.btn:focus, .btn:active:focus, .btn.active:focus {
+    background: #424100;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background: #424100;
+}
+
+.btn-primary:active, .btn-primary.active {
+    background: #424100;
+    box-shadow: none;
 }
 </style>
- </head>
- <body>
-   <div class="navbar navbar-light navbar-inverse navbar-fixed-left">
-   <ul class="nav navbar-light navbar-nav" style='font-size:24px;'>
-   <li style=' padding-left: 15px; padding-top: 20px; padding-bottom:100px; font-size:50px; color: #1a66ff; font-weight:700;'>DaliSoft</li>
-    <li style='padding-bottom:3%; font-weight:600;'><a href="{% url 'form1'%}">SKU Configuration</a></li>
-    <li style='padding-bottom:3%;'><a href="{% url 'form2'%}">Order Management</a></li>
-    <li style='padding-bottom:3%;'><a href="{% url 'sequence'%}">Sequence</a></li>
-    <li style='padding-bottom:3%;'><a href="#">Hold Management</a></li>
-   </ul>
-   </div>
-   {% block content %}{% endblock %}
-   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-   <script src="https://apis.google.com/js/platform.js" async defer></script>
-   <!-- Include all compiled plugins (below), or include individual files as needed -->
-   {% block javascript %}
-   {% endblock %}
- </body>
+</head>
+<body>
+{% block content %}{% endblock %}
+<!-- Start of Bootom Nav Bar -->
+<div class="bnav">
+<div class="btn-group btn-group-justified bgroup">
+  <a href="{% url 'form1' %}" class="btn btn-primary bbutton1">CONFIGURATION</a>
+  <a href="{% url 'form2' %}" class="btn btn-primary bbutton1">PRODUCTION PLAN</a>
+  <a href="{% url 'sequence' %}" class="btn btn-primary bbutton1">ORDER MONITORING</a>
+  <a href="#" class="btn btn-primary bbutton1">LINE MONITORING</a>
+  <a href="#" class="btn btn-primary bbutton1">MACH MONITORING</a>
+  <a href="#" class="btn btn-primary bbutton1">HOLD LOG</a>
+  <a href="#" class="btn btn-primary bbutton1">WORK IN PROGRESS</a>
+  <a href="#" class="btn btn-primary bbutton1">HELP</a>
+</div>
+<div class="btn-group btn-group-justified bgroup">
+  <a href="#" class="btn btn-primary bbutton2">PROCESS</a>
+  <a href="#" class="btn btn-primary bbutton2" style="background-color:navy">PRODUCTION</a>
+  <a href="#" class="btn btn-primary bbutton2">MATERIAL</a>
+  <a href="#" class="btn btn-primary bbutton2">TRACK & TRACE</a>
+  <a href="#" class="btn btn-primary bbutton2">QUALITY</a>
+  <a href="#" class="btn btn-primary bbutton2">MAINTENANCE</a>
+  <a href="#" class="btn btn-primary bbutton2">PERFORMANCE</a>
+  <a href="#" class="btn btn-primary bbutton2">WORKFORCE MGMT</a>
+</div>
+</div>
+<!--End of Bottom Nav Bar-->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+{% block javascript %}
+{% endblock %}
+</body>
 </html>

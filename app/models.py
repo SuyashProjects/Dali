@@ -18,6 +18,7 @@ class Config(models.Model):
     time = models.IntegerField(null=True)
     constraints = models.ManyToManyField(Constraint, related_name='Constraint',blank=True)
     tank = models.CharField(max_length=50)
+    description = models.CharField(max_length=100,blank=True,null=True)
     def submit(self):
         self.save()
     def __str__(self):
