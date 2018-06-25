@@ -32,16 +32,15 @@ def form2(request):
       if form.is_valid():
         Obj = form.cleaned_data
         SKU = Obj['SKU']
-        model = Obj['model']
-        variant = Obj['variant']
-        color = Obj['color']
-        tank = Obj['tank']
         quantity = Obj['quantity']
-        Config.objects.filter(SKU=SKU,model=model,variant=variant,tank=tank).update(quantity=quantity)
+        ratio = Obj['ratio']
+        Config.objects.filter(SKU=SKU).update(quantity=quantity)
+        Config.objects.filter(SKU=SKU).update(ratio=ratio)
       else:
           print('error')
     form = Form2()
-    return render_to_response( 'app/form2.html',{'form':form}, RequestContext(request))
+    view = Config.objects.all().values()
+    return render_to_response( 'app/form2.html',{'form':form,'view':view}, RequestContext(request))
 
 def sequence(request):
     Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
@@ -58,8 +57,8 @@ def sequence(request):
       Seq_SKU=[]
       Sequence={}
       Ratio1=1
-      Ratio2=2
-      Ratio_Sum=3
+      Ratio2=3
+      Ratio_Sum=4
       SKU1=1
       SKU2=2
       Seq=[]

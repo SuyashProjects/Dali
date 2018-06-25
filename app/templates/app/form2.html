@@ -1,7 +1,7 @@
 {% extends 'app/base.html' %}
 {% block content %}
 <head>
-  <style>
+<style>
 .bar{
 width:100%;
 height:auto;
@@ -47,7 +47,6 @@ margin-left:92%;
   }
 </style>
 </head>
-
 <!--Heading-->
 <div class="bar">
 <div class="heading">
@@ -55,7 +54,6 @@ SKU  Configuration
 </div>
 </div>
 <!--End of Heading-->
-
 <!--Start of Form-->
 <div class="ccontainer">
 <div class="cform">
@@ -76,7 +74,15 @@ SKU  Configuration
            {{ form.quantity.errors }}
            {{ form.quantity }}
          </div>
-       </div></div>
+       </div>
+       <div class="col-xs-2">
+         <label>Ratio</label>
+         {{ form.non_field_errors }}
+         <div class="fieldWrapper">
+         {{ form.ratio.errors }}
+         {{ form.ratio }}
+       </div>
+     </div></div>
        <div class="row">
        <div class="col-xs-2">
          <label>Constraints</label>
@@ -87,63 +93,48 @@ SKU  Configuration
        </div>
      </div>
      </div>
-<button type="submit" class="btn cbutton">Add New</button>
+<button type="submit" class="btn cbutton">Place Order</button>
 </form>
-</div>
+</div></div>
 <!--End of form-->
 <!--Start of Table-->
-            {% endblock %}
-            {% block javascript %}
-<script>
-var model;
-var variant;
-var color;
+<div class="card" style="margin-left:100px; margin-right:60px; background-color:#696969; color:white; margin-top:25px; border:solid white 2px; ">
+<div class="card-body">
+ <div class="table-wrapper-2">
+<!--Table-->
+<table class="table table-responsive-md">
+<thead class="mdb-color lighten-4" style="background-color:#363744 !important;">
+<tr>
+<th>S.No</th>
+<th class="th-lg">Model</th>
+<th class="th-lg">Variant</th>
+<th class="th-lg">Color</th>
+<th class="th-lg">Fuel Tank Type</th>
+<th class="th-lg">TAKT Time</th>
+<th class="th-lg">Quantity</th>
+<th class="th-lg">Ratio</th>
+</tr>
+</thead>
 
-$("#id_SKU").change(function () {
-  sku = $(this).val();  // get the selected country ID from the HTML input
-  $.ajax({                       // initialize an AJAX request
-    url: '/ajax/populate/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
-    data: {'sku': sku      // add the country id to the GET parameters
-    },
-    success: function (data) {
-      console.log(data)  // `data` is the return of the `load_cities` view function
-      $("#id_model").html(data);  // replace the contents of the city input with the data that came from the server
-}});});
+<tbody>
+  <tr>
+    {% for key in view %}
+    <th>{{key.SKU}}</th>
+    <th>{{key.model}}</th>
+    <th>{{key.variant}}</th>
+    <th>{{key.color}}</th>
+    <th>{{key.tank}}</th>
+    <th>{{key.time}}</th>
+    <th>{{key.quantity}}</th>
+    <th>{{key.ratio}}</th>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+<!--Table-->
 
-  $("#id_model").change(function () {
-    model = $(this).val();  // get the selected country ID from the HTML input
-    $.ajax({                       // initialize an AJAX request
-      url: '/ajax/populate_variant/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
-      data: {'model': model       // add the country id to the GET parameters
-      },
-      success: function (data) {
-        console.log(data)  // `data` is the return of the `load_cities` view function
-        $("#id_variant").html(data);  // replace the contents of the city input with the data that came from the server
-}});});
+</div>
 
-$("#id_variant").change(function () {
-  variant = $(this).val();  // get the selected country ID from the HTML input
-$.ajax({                       // initialize an AJAX request
-url: '/ajax/populate_color/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
-data: {'model': model,
-       'variant': variant,     // add the country id to the GET parameters
-},
-success: function (data) {
-console.log(data)  // `data` is the return of the `load_cities` view function
-$("#id_color").html(data);  // replace the contents of the city input with the data that came from the server
-}});});
-
-$("#id_color").change(function () {
-  color = $(this).val();  // get the selected country ID from the HTML input
-$.ajax({                       // initialize an AJAX request
-url: '/ajax/populate_tank/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
-data: {'model': model,
-       'variant': variant,
-       'color': color,     // add the country id to the GET parameters
-},
-success: function (data) {
-console.log(data)  // `data` is the return of the `load_cities` view function
-$("#id_tank").html(data);  // replace the contents of the city input with the data that came from the server
-}});});
-</script>
-            {% endblock %}
+</div>
+</div>
+{% endblock %}

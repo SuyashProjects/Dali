@@ -16,6 +16,7 @@ class Config(models.Model):
     color = models.CharField(max_length=50)
     quantity = models.IntegerField(blank=True,null=True)
     time = models.IntegerField(null=True)
+    ratio = models.IntegerField(blank=True,null=True)
     constraints = models.ManyToManyField(Constraint, related_name='Constraint',blank=True)
     tank = models.CharField(max_length=50)
     description = models.CharField(max_length=100,blank=True,null=True)
