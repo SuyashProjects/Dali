@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response,redirect,render
 from django.utils import timezone
-from .models import Config,Constraint
+from .models import Config,Constraint,Shift,Station
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import Form1,Form2
@@ -36,7 +36,7 @@ def form2(request):
         ratio = Obj['ratio']
         Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio)
       else:
-          print('error')
+          print('Error')
     form = Form2()
     view = Config.objects.all().values()
     return render_to_response( 'app/form2.html',{'form':form,'view':view}, RequestContext(request))

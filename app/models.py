@@ -3,7 +3,6 @@ from django.utils import timezone
 
 class Constraint(models.Model):
     name = models.CharField(max_length=100)
-    shift_time = models.IntegerField(default=8)
     def submit(self):
         self.save()
     def __str__(self):
@@ -14,9 +13,9 @@ class Config(models.Model):
     model = models.CharField(max_length=50)
     variant = models.CharField(max_length=50)
     color = models.CharField(max_length=50)
-    quantity = models.IntegerField(blank=True,null=True)
-    time = models.IntegerField(null=True)
-    ratio = models.IntegerField(blank=True,null=True)
+    quantity = models.PositiveIntegerField(blank=True,null=True)
+    time = models.PositiveIntegerField(null=True)
+    ratio = models.IntegerField(null=True)
     constraints = models.ManyToManyField(Constraint, related_name='Constraint',blank=True)
     tank = models.CharField(max_length=50)
     description = models.CharField(max_length=100,blank=True,null=True)
@@ -24,3 +23,19 @@ class Config(models.Model):
         self.save()
     def __str__(self):
         return str(self.SKU)
+
+class Station(models.Model):
+    name = models.CharField(max_length=50)
+    time = models.PositiveIntegerField(null=True)
+    def submit(self):
+        self.save()
+    def __str__(self):
+        return str(self.name)
+
+class Shift(models.Model):
+    name = models.CharField(max_length=10)
+    time = models.PositiveIntegerField(null=True,default=8)
+    def submit(self):
+        self.save()
+    def __str__(self):
+        return str(self.name)

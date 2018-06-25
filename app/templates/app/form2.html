@@ -1,5 +1,4 @@
 {% extends 'app/base.html' %}
-{% block content %}
 <head>
 <style>
 .bar{
@@ -31,7 +30,7 @@ text-align: left;
 border-radius: 2px;
 font-size:16px;
 }
-.table-wrapper-2 {
+.table-wrapper-2{
 display: block;
 max-height: 300px;
 overflow-y: auto;
@@ -44,64 +43,50 @@ padding-right: 1%;
 background-color:#C0C0C0;
 color:black;
 margin-left:92%;
-  }
-</style>
-</head>
-<!--Heading-->
-<div class="bar">
-<div class="heading">
+}
+</style></head>
+{% block content %}
+<div class="bar"><div class="heading">
 Order Management
-</div>
-</div>
-<!--End of Heading-->
-<!--Start of Form-->
+</div></div>
 <div class="ccontainer">
 <div class="cform">
-     <form method="POST">{% csrf_token %}
-     <div class="form-group row" style="margin-left:0 auto 0;">
-       <div class="col-xs-2">
-         <label>Enter SKU</label>
-         {{ form.non_field_errors }}
-         <div class="fieldWrapper">
-         {{ form.SKU.errors }}
-         {{ form.SKU }}
-       </div>
-       </div>
-         <div class="col-xs-2">
-           <label>Quantity</label>
-           {{ form.non_field_errors }}
-           <div class="fieldWrapper">
-           {{ form.quantity.errors }}
-           {{ form.quantity }}
-         </div>
-       </div>
-       <div class="col-xs-2">
-         <label>Ratio</label>
-         {{ form.non_field_errors }}
-         <div class="fieldWrapper">
-         {{ form.ratio.errors }}
-         {{ form.ratio }}
-       </div>
-     </div></div>
-       <div class="row">
-       <div class="col-xs-3">
-         <label>Constraints</label>
-         {{ form.non_field_errors }}
-         <div class="fieldWrapper">
-         {{ form.constraints.errors }}
-         {{ form.constraints }}
-       </div>
-     </div>
-     </div>
+<form method="POST">{% csrf_token %}
+<div class="form-group row" style="margin-left:0 auto 0;">
+<div class="col-xs-2">
+<label>Enter SKU</label>
+{{ form.non_field_errors }}
+<div class="fieldWrapper">
+{{ form.SKU.errors }}
+{{ form.SKU }}
+</div></div>
+<div class="col-xs-2">
+<label>Quantity</label>
+{{ form.non_field_errors }}
+<div class="fieldWrapper">
+{{ form.quantity.errors }}
+{{ form.quantity }}
+</div></div>
+<div class="col-xs-2">
+<label>Ratio</label>
+{{ form.non_field_errors }}
+<div class="fieldWrapper">
+{{ form.ratio.errors }}
+{{ form.ratio }}
+</div></div></div>
+<div class="row"><div class="col-xs-3">
+<label>Constraints</label>
+{{ form.non_field_errors }}
+<div class="fieldWrapper">
+{{ form.constraints.errors }}
+{{ form.constraints }}
+</div></div></div>
 <button type="submit" class="btn cbutton">Place Order</button>
 </form>
 </div></div>
-<!--End of form-->
-<!--Start of Table-->
 <div class="card" style="margin-left:100px; margin-right:60px; background-color:#696969; color:white; margin-top:25px; border:solid white 2px; ">
 <div class="card-body">
  <div class="table-wrapper-2">
-<!--Table-->
 <table class="table table-responsive-md">
 <thead class="mdb-color lighten-4" style="background-color:#363744 !important;">
 <tr>
@@ -115,26 +100,19 @@ Order Management
 <th class="th-lg">Ratio</th>
 </tr>
 </thead>
-
 <tbody>
-  <tr>
-    {% for key in view %}
-    <th>{{key.SKU}}</th>
-    <th>{{key.model}}</th>
-    <th>{{key.variant}}</th>
-    <th>{{key.color}}</th>
-    <th>{{key.tank}}</th>
-    <th>{{key.time}}</th>
-    <th>{{key.quantity}}</th>
-    <th>{{key.ratio}}</th>
-  </tr>
-  {% endfor %}
-</tbody>
-</table>
-<!--Table-->
-
-</div>
-
-</div>
-</div>
+<tr>
+{% for key in view %}
+<td>{{key.SKU}}</td>
+<td>{{key.model}}</td>
+<td>{{key.variant}}</td>
+<td>{{key.color}}</td>
+<td>{{key.tank}}</td>
+<td>{{key.time}}</td>
+<td>{{key.quantity}}</td>
+<td>{{key.ratio}}</td>
+</tr>
+{% endfor %}
+</tbody></table>
+</div></div></div>
 {% endblock %}
