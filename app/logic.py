@@ -15,5 +15,5 @@
         SKU5=Config.objects.filter(SKU=i+1).values('SKU','color')[0]['SKU']
         list1.append(SKU5)
         print(list1)
-        newlist = sorted(list1, key=itemgetter('color'))
-        print(newlist)
+      newlist = sorted(list1, key=itemgetter('color'))
+      print(newlist)
