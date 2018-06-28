@@ -7,7 +7,7 @@ class Form1(forms.ModelForm):
     color = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     tank = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     time = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
-    description = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    description = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}),required=False)
     class Meta:
         model = Config
         fields = ('model','variant','color','tank','time','description')
