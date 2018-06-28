@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response,redirect,render
 from django.utils import timezone
-from .models import Config,Constraint,Shift,Station
+from .models import Config,Constraint,Shift,Station1,Station2,Station3,Station4,Station5,Station6,Station7,Station8,Station9,Station10
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import Form1,Form2
