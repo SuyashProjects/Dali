@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import Form1,Form2
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
-from operator import itemgetter
+from operator import attrgetter
 
 @csrf_exempt
 def form1(request):
@@ -58,15 +58,28 @@ def sequence(request):
       Seq_SKU=[]
       Sequence1={}
       Sequence2=[]
+      Sequence3=[]
       sku_list=[]
       ratio_list=[]
       temp=[]
       list1=[]
+      list2=[]
+      full=[]
       #Color Blocking
-      for i in range(0,SKU_Count):
-        SKU5=Config.objects.filter(SKU=i+1).values('SKU','color')
-        list1.append(SKU5)
-        print(list1)
+      SKU5=Config.objects.values('SKU').order_by('color')
+      for key in SKU5:
+       list1.append(key['SKU'])
+      print(list1)
+      for i in list1:
+       list2.append(Config.objects.filter(SKU=i).values('ratio')[0]['ratio'])
+      print(list2)
+      SKU5 = list(zip(list1, list2))
+      for x in range (0,Total_Order//Ratio_Sum):
+       for key,value in SKU5:
+        for value in range(value):
+         Sequence3.append(key)
+      for value in Sequence3:
+         full.append(Config.objects.filter(SKU=value).values())
       #Phase 1
       for i in range(0,SKU_Count):
        SKU=Config.objects.filter(SKU=i+1).values()
@@ -87,4 +100,5 @@ def sequence(request):
       for value in Sequence2:
          temp.append(Config.objects.filter(SKU=value).values())
       Sequence2 = list(zip(Seq_Num,temp))
-    return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2}, RequestContext(request))
+      Sequence3 = list(zip(Seq_Num,full))
+    return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3}, RequestContext(request))

@@ -17,3 +17,17 @@
         print(list1)
       newlist = sorted(list1, key=itemgetter('color'))
       print(newlist)
+
+
+
+
+
+      SKU5=Config.objects.values_list('SKU', flat=True).order_by('color')
+      print(SKU5)
+      for i in SKU5:
+          list1.append(Config.objects.filter(SKU=SKU5[i-1]).values('SKU')[0]['SKU'])
+          print(list1)
+          list2.append(Config.objects.filter(SKU=SKU5[i-1]).values('ratio')[0]['ratio'])
+          print(list2)
+      t=list(zip(list1, list2))
+      print(t)
