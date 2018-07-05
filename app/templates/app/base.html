@@ -10,40 +10,288 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
+
+/* Body Style */
 body{
 margin:0;
 width: 100%;
 height:100;
-background-image: url("{% static 'Background.png' %}") ;
+background-image: url("{% static 'Back.png' %}") ;
 background-size: cover;
 background-color: black;
 font-family: "Lucida Sans Unicode";
 }
-.bnav
+
+
+/*bar and heading control the top header */
+.bar{
+width:100%;
+height:auto;
+padding-top: 10px;
+}
+.heading{
+width:20%;
+height:auto;
+margin:0 auto 0;
+font-size: 30px;
+font-weight: bold;
+color: white;
+}
+/* - */
+
+
+/* Container style (Present in all pages) */
+.container
+{
+width:100%;
+height:auto;
+float: left;
+box-sizing: border-box;
+}
+/* - */
+
+
+.heading2{
+width:30%;
+border: 2px solid white;
+text-align: center;
+height:auto;
+margin:0 auto 0;
+font-size: 20px;
+font-weight: bold;
+color: white;
+padding:3px;
+background-color: black ;
+}
+
+
+.area1
+{
+width:50%;
+height:auto;
+padding:10px;
+float: left;
+box-sizing: border-box;
+}
+.area2
+{
+width:50%;
+height:auto;
+padding:10px;
+float: left;
+box-sizing: border-box;
+}
+.panel
+{
+  width:100%;
+  height:auto;
+  border:2px solid white;
+  border-radius:2px;
+  background-color: #50515e;
+  padding: 10px;
+  float: left;
+  box-sizing: border-box;
+  color:white;
+}
+
+.ccontainer2{
+margin-top: 25px;
+width:100%;
+height:auto;
+margin-bottom: 10px;
+}
+.ccontainer{
+margin-top: 30px;
+width:100%;
+height:auto;
+margin-bottom: 20px;
+}
+.cform{
+background-color: #50515e;
+margin:0 auto 0;
+width:80%;
+height: auto;
+color: #EEEEEE !important;
+padding: 18px;
+text-align: left;
+border-radius: 2px;
+border: 2px solid white;
+font-size:16px;
+}
+
+.fpanel
+{
+  width:90%;
+  height:auto;
+  border:2px solid white;
+  border-radius:2px;
+  background-color: #50515e;
+  padding: 10px;
+  float: left;
+  box-sizing: border-box;
+  color:white;
+}
+
+.custom1
+{
+  padding:1% 2% 1%;
+}
+.blpanel
+{
+  width:100%;
+  height:auto;
+  border:2px solid white;
+  border-radius:2px;
+  background-color: black;
+  padding: 10px;
+  float: left;
+  box-sizing: border-box;
+  color:white;
+}
+.table-wrapper-2{
+display: block;
+max-height: 300px;
+overflow-y: auto;
+-ms-overflow-style: -ms-autohiding-scrollbar;
+}
+.bot
 {
 position: fixed;
 bottom: 0;
 }
-.bbutton1
-{
-background-color:olive;
-border-width:1px;
-border-style:outset;
-border-color: #a9d157;
+.bpad{
+width:100%;
+padding:0 2px 0;
 }
-.bgroup
-{
-padding-left:2px;
-padding-right:2px;
-font-size:16px;
-font-weight:800;
+.btn-group-1 button {
+  background-color: olive;
+  border: 1px outset #a9d157;
+  color: white;
+  cursor: pointer;
+  float: left;
 }
-.bbutton2
-{
-background-color:#205867;
-border-width:1px;
-border-style:outset;
-border-color: #78c6db;
+.btn-group-2 button {
+  background-color: #205867;
+  border: 1px outset #78c6db;
+  color: white;
+  cursor: pointer;
+  float: left;
+}
+.cbtn1{
+font-size:14px;
+width:12.5%;
+padding:6px;
+font-weight: 500;
+}
+.cbtn1:focus, .cbtn1:active, .cbtn1:target{
+background-color: #424100;
+outline: 0;
+}
+.cbtns1{
+font-size:14px;
+width:12.5%;
+padding:6px;
+border-radius: 5px 0px 0px 5px;
+font-weight: 500;
+}
+.cbtns1:focus{
+background-color: #424100;
+outline: 0;
+}
+.cbtns1:active{
+background-color: #424100;
+outline: 0;
+}
+.cbtne1{
+font-size:14px;
+width:12.5%;
+padding:6px;
+border-radius: 0px 5px 5px 0px;
+font-weight: 500;
+}
+.cbtne1:focus{
+background-color: #424100;
+outline: 0;
+}
+.cbtne1:active{
+background-color: #424100;
+outline: 0;
+}
+.cbtn2{
+font-size:14px;
+width:12.5%;
+padding:6px;
+font-weight: 500;
+}
+.cbtn2:focus{
+background-color: navy;
+outline: 0;
+}
+.cbtn2:active{
+background-color: navy;
+outline: 0;
+}
+.cbtns2{
+font-size:14px;
+width:12.5%;
+padding:6px;
+border-radius: 5px 0px 0px 5px;
+font-weight: 500;
+}
+.cbtns2:focus{
+background-color: navy;
+outline: 0;
+}
+.cbtns2:active{
+background-color: navy;
+outline: 0;
+}
+.cbtne2{
+font-size:14px;
+width:12.5%;
+padding:6px;
+border-radius: 0px 5px 5px 0px;
+font-weight: 500;
+}
+.cbtne2:focus{
+background-color: navy;
+outline: 0;
+}
+.cbtne2:active{
+background-color: navy;
+outline: 0;
+}
+.btn-group-1 button:hover {
+    background-color: #424100;
+    outline: 0;
+}
+
+.btn-group-2 button:hover {
+    background-color: navy;
+    outline: 0;
+}
+a{
+  color: inherit;
+  background-color: inherit;
+  text-decoration: none;
+}
+a:hover{
+  color: inherit;
+  background-color: inherit;
+  text-decoration: none;
+  outline: 0;
+}
+a:focus{
+  color: inherit;
+  background-color: inherit;
+  text-decoration: none;
+  outline: 0;
+}
+a:active{
+  color: inherit;
+  background-color: inherit;
+  text-decoration: none;
+  outline: 0;
 }
 .btn-sub {
   padding:5px;
@@ -51,7 +299,9 @@ border-color: #78c6db;
   color: #000000;
   background-color: #C4C4C4;
   border-color: none;
+  outline: 0;
 }
+
 .btn-sub:hover,
 .btn-sub:focus,
 .btn-sub:active,
@@ -60,12 +310,16 @@ border-color: #78c6db;
   color: #000000;
   background-color: #EBEBEB;
   border-color: none;
+  outline: 0;
 }
+
 .btn-sub:active,
 .btn-sub.active,
 .open .dropdown-toggle.btn-sub {
   background-image: none;
+  outline: 0;
 }
+
 .btn-sub.disabled,
 .btn-sub[disabled],
 fieldset[disabled] .btn-sub,
@@ -83,38 +337,18 @@ fieldset[disabled] .btn-sub:active,
 fieldset[disabled] .btn-sub.active {
   background-color: #C4C4C4;
   border-color: none;
+  outline: 0;
 }
+
 .btn-sub .badge {
   color: #C4C4C4;
   background-color: none;
-}
-.panel{
-background-color:black;
+  outline: 0;
 }
 </style></head>
 <body>
 {% block content %}{% endblock %}
-<div class="container" style="margin-top:30px; padding-left:2%; padding-right:2%;">
-<div class="panel"><marquee behavior="scroll" direction="left" style="font-size:20px">No Alerts to show</marquee></div></div>
-<div class="bnav">
-<div class="btn-group btn-group-justified bgroup">
-<a href="{% url 'form1' %}" class="btn btn-primary bbutton1">CONFIGURATION</a>
-<a href="{% url 'form2' %}" class="btn btn-primary bbutton1">PRODUCTION PLAN</a>
-<a href="{% url 'sequence' %}" class="btn btn-primary bbutton1">ORDER MONITORING</a>
-<a href="#" class="btn btn-primary bbutton1">LINE MONITORING</a>
-<a href="#" class="btn btn-primary bbutton1">MACH MONITORING</a>
-<a href="#" class="btn btn-primary bbutton1">HOLD LOG</a>
-<a href="#" class="btn btn-primary bbutton1">WORK IN PROGRESS</a>
-<a href="#" class="btn btn-primary bbutton1">HELP</a></div>
-<div class="btn-group btn-group-justified bgroup">
-<a href="#" class="btn btn-primary bbutton2">PROCESS</a>
-<a href="#" class="btn btn-primary bbutton2" style="background-color:navy">PRODUCTION</a>
-<a href="#" class="btn btn-primary bbutton2">MATERIAL</a>
-<a href="#" class="btn btn-primary bbutton2">TRACK & TRACE</a>
-<a href="#" class="btn btn-primary bbutton2">QUALITY</a>
-<a href="#" class="btn btn-primary bbutton2">MAINTENANCE</a>
-<a href="#" class="btn btn-primary bbutton2">PERFORMANCE</a>
-<a href="#" class="btn btn-primary bbutton2">WORKFORCE MGMT</a></div></div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 {% block javascript %}
