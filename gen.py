@@ -3,10 +3,8 @@ from numpy import array
 from numpy import amax
 from numpy import zeros
 
-def main(Sequence3):
-   tl=([[41,40,43,41,44,41,45,40,42,43],
-       [54,51,53,51,55,50,52,48,51,52],
-       [44,47,46,49,48,45,41,50,42,49]])
+def main(Sequence3,tl):
+   tl=tl
    a=array(tl)
    print("Array of Station TAKT Times:")
    print(a)

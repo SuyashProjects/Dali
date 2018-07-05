@@ -18,10 +18,10 @@ def form1(request):
           variant = Obj['variant']
           color = Obj['color']
           if (Config.objects.filter(model=model,variant=variant,color=color).exists()):
-                  print('sku exists')
+           print('sku exists')
           else:
-                  form = form.save()
-                  form.save()
+           form = form.save()
+           form.save()
     form = Form1()
     view = Config.objects.all().values()
     return render_to_response( 'app/form1.html',{'form':form, 'view':view}, RequestContext(request))
@@ -48,7 +48,7 @@ def sequence(request):
     Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
     Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
     SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
-    print(SKU_Count)
+    tl = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
     for i in range(0,SKU_Count):
      if Config.objects.filter(SKU=i+1,quantity=None,ratio=None).exists():
          SKU_Count=SKU_Count-1
@@ -102,7 +102,7 @@ def sequence(request):
          Sequence2.append(key)
       for value in Sequence2:
          temp.append(Config.objects.filter(SKU=value).values())
-      time = main(Sequence3)
+      time = main(Sequence3,tl)
       Sequence2 = list(zip(Seq_Num,temp))
       Sequence3 = list(zip(Seq_Num,full))
 

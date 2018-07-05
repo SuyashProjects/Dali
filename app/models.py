@@ -8,16 +8,8 @@ class Constraint(models.Model):
     def __str__(self):
         return str(self.name)
 
-class Station(models.Model):
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
 class Config(models.Model):
     SKU = models.AutoField(primary_key=True)
-    Station = models.ManyToManyField(Station, null=True)
     model = models.CharField(max_length=50)
     variant = models.CharField(max_length=50)
     color = models.CharField(max_length=50)
@@ -27,6 +19,23 @@ class Config(models.Model):
     constraints = models.ManyToManyField(Constraint, related_name='Constraint',blank=True)
     tank = models.CharField(max_length=50)
     description = models.CharField(max_length=100,default=None,blank=True,null=True)
+    def submit(self):
+        self.save()
+    def __str__(self):
+        return str(self.SKU)
+
+class Station(models.Model):
+    SKU = models.ForeignKey(Config, on_delete=models.CASCADE)
+    stn1 = models.PositiveIntegerField(null=True)
+    stn2 = models.PositiveIntegerField(null=True)
+    stn3 = models.PositiveIntegerField(null=True)
+    stn4 = models.PositiveIntegerField(null=True)
+    stn5 = models.PositiveIntegerField(null=True)
+    stn6 = models.PositiveIntegerField(null=True)
+    stn7 = models.PositiveIntegerField(null=True)
+    stn8 = models.PositiveIntegerField(null=True)
+    stn9 = models.PositiveIntegerField(null=True)
+    stn10 = models.PositiveIntegerField(null=True)
     def submit(self):
         self.save()
     def __str__(self):
