@@ -28,17 +28,7 @@ def form1(request):
 
 @csrf_exempt
 def form2(request):
-    if request.method == 'POST' and 'btnform3':
-      forms = Form3(request.POST)
-      if forms.is_valid():
-        Obj = forms.cleaned_data
-        time1 = Obj['time1']
-        time2 = Obj['time2']
-        time3 = Obj['time3']
-        print(Obj)
-        Shift.objects.filter(name='A').update(time=time1)
-        Shift.objects.filter(name='B').update(time=time2)
-        Shift.objects.filter(name='C').update(time=time3)
+    if request.method == 'POST':
       form = Form2(request.POST)
       if form.is_valid():
         Obj = form.cleaned_data
@@ -58,9 +48,12 @@ def sequence(request):
     Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
     Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
     SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
+    print(SKU_Count)
+    for i in range(0,SKU_Count):
+     if Config.objects.filter(SKU=i+1,quantity=None,ratio=None).exists():
+         SKU_Count=SKU_Count-1
     Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
     Total_Shift_Time=list(Shift.objects.aggregate(Sum('time')).values())[0]
-
     Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
     if(Total_Order>Capacity):
       print('Capacity is being exceeded, reduce orders!')
@@ -78,7 +71,7 @@ def sequence(request):
       list2=[]
       full=[]
       #Color Blocking
-      SKU5=Config.objects.values('SKU').order_by('color')
+      SKU5=Config.objects.exclude(quantity__isnull=True,ratio__isnull=True).values('SKU').order_by('color')
       for key in SKU5:
        list1.append(key['SKU'])
       for i in list1:
@@ -90,8 +83,6 @@ def sequence(request):
          Sequence3.append(key)
       for value in Sequence3:
          full.append(Config.objects.filter(SKU=value).values())
-      time = main(Sequence3)
-      print(time)
       #Phase 1
       for i in range(0,SKU_Count):
        SKU=Config.objects.filter(SKU=i+1).values()
@@ -111,6 +102,7 @@ def sequence(request):
          Sequence2.append(key)
       for value in Sequence2:
          temp.append(Config.objects.filter(SKU=value).values())
+      time = main(Sequence3)
       Sequence2 = list(zip(Seq_Num,temp))
       Sequence3 = list(zip(Seq_Num,full))
 

@@ -13,8 +13,8 @@ CURRENT SEQUENCE
 
 <div class="container">
 <div class="card" style="height:540px; margin-left:0%; margin-right:0%; background-color:#696969; color:white; margin-top:15px; border:solid white 2px;">
-<div class="card-body" style="height:540px;">
- <div class="table-wrapper-2" style="height:540px;" >
+<div class="card-body">
+ <div class="table-wrapper-2" style="height:535px;" >
 <table class="table table-responsive-md table-bordered">
 <thead class="mdb-color lighten-4" style="background-color:#101669 !important; color:white !important;">
 <tr>
@@ -30,7 +30,7 @@ CURRENT SEQUENCE
 </thead>
 <tbody>
 <tr>
-{% for key,value in Sequence1 %}
+{% for key,value in Sequence2 %}
 <td>OR_{{ key }}</td>
 {% for value in value %}
 <td>{{ value.SKU }}</td>
@@ -38,6 +38,7 @@ CURRENT SEQUENCE
 <td>{{ value.variant }}</td>
 <td>{{ value.color }}</td>
 <td>{{ value.tank }}</td>
+<td>Running/On Hold</td>
 {% endfor %}
 </tr>
 {% endfor %}

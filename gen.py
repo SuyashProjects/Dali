@@ -7,32 +7,22 @@ def main(Sequence3):
    tl=([[41,40,43,41,44,41,45,40,42,43],
        [54,51,53,51,55,50,52,48,51,52],
        [44,47,46,49,48,45,41,50,42,49]])
-
    a=array(tl)
    print("Array of Station TAKT Times:")
    print(a)
-
    tq=([10,20,30])
    q=array(tq)
    print("Array of Quantities:")
    print(q)
-
-
-
    tSeq=Sequence3
    Seq=array(tSeq)
    Line=zeros(10)
-
    sz=len(Seq)
    print(Seq)
    print(sz)
-
    Time=zeros(10)
-
    Total_time=0
-
    j=9
-
    print("Dynamic Line Instances along with TAKT Times:")
    for i in range(69):
        if(i>59):
@@ -73,7 +63,6 @@ def main(Sequence3):
            TKTME=amax(Time)
            print(TKTME)
            Total_time=Total_time+TKTME
-
    print("")
    print("Total Time taken:")
    print(Total_time)
