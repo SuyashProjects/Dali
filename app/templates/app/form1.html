@@ -1,61 +1,11 @@
 {% extends 'app/base.html' %}
 {% block content %}
-<head><style>
-.bar{
-width:100%;
-height:auto;
-padding-top: 10px;
-}
-.heading{
-width:20%;
-height:auto;
-margin:0 auto 0;
-font-size: 30px;
-font-weight: bold;
-color: white;
-}
-.ccontainer{
-margin-top: 35px;
-width:100%;
-height:auto;
-}
-.cform{
-background-color: #416E8B;
-margin:0 auto 0;
-width:80%;
-height: auto;
-color: #EEEEEE !important;
-padding: 18px;
-text-align: left;
-border-radius: 2px;
-font-size:16px;
-}
-.table-wrapper-2{
-display: block;
-max-height: 300px;
-overflow-y: auto;
--ms-overflow-style: -ms-autohiding-scrollbar;
-}
-.cbutton{
-width:auto;
-padding-left:1% ;
-padding-right: 1%;
-background-color:#C0C0C0;
-color:black;
-margin-left:92%;
-}
-.card{
-margin-left:100px;
-margin-right:60px;
-background-color:#696969;
-color:white;
-margin-top:25px;
-border:solid white 2px;
-}
-</style></head>
+
 <div class="bar"><div class="heading">
 SKU Configuration
 </div></div>
+
+
 <div class="ccontainer">
 <div class="cform">
 <form method="POST">{% csrf_token %}
@@ -102,14 +52,22 @@ SKU Configuration
 {{ form.description.errors }}
 {{ form.description }}
 </div></div></div>
-<button type="submit" class="btn cbutton">Add New</button>
+<div style="text-align:right;">
+<button type="submit" class="btn-sub">Add New</button>
+</div>
 </form>
+
+
+</div>
+<div class="ccontainer2"><div class="heading2">
+EXISTING SKU CONFIGURATIONS
 </div></div>
-<div class="card">
-<div class="card-body">
-<div class="table-wrapper-2">
-<table class="table table-responsive-md">
-<thead class="mdb-color lighten-4" style="background-color:#363744 !important;">
+
+<div class="card" style="height: 350px; margin-left:100px; margin-right:60px; background-color:#696969; color:white; margin-top:20px; border:solid white 2px; ">
+<div class="card-body" style="height: 350px;">
+<div class="table-wrapper-2" style="height: 350px;">
+<table class="table table-responsive-md table-bordered">
+<thead class="mdb-color lighten-4" style="background-color:#101669 !important;">
 <tr>
 <th>S.No</th>
 <th class="th-lg">Model</th>
@@ -133,4 +91,69 @@ SKU Configuration
 </tbody>
 </table>
 </div></div></div>
+<div style="text-align:center; margin-top:10px;">
+<button type="" class="btn-sub" style="">Modify</button>
+<button type="" class="btn-sub" style="margin-left:20px;">Delete</button>
+<button type="" class="btn-sub" style="margin-left:20px;">Options</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Start of Bottom area(Nav Bar & Ticker) Code -->
+<div class="bot bpad">
+
+
+
+<!-- Start of Info Ticker Code-->
+<div class="container custom1">
+<div class="blpanel">
+<marquee behavior="scroll" direction="left">No Alerts to show</marquee>
+</div>
+</div>
+<!-- End of Info Ticker Code -->
+
+
+
+<!-- Start Nav Bar Code -->
+<div class="btn-group-1">
+  <a href="{% url 'form1' %}"><button class="cbtns1" style="background-color:#424100;">CONFIGURATION</button></a>
+  <a href="{% url 'form2' %}"><button class="cbtn1">PRODUCTION PLAN</button></a>
+  <a href="{% url 'sequence' %}"><button class="cbtn1">ORDER MONITORING</button></a>
+  <a href="#"><button class="cbtn1">LINE MONITORING</button></a>
+  <a href="#"><button class="cbtn1">MACH MONITORING</button></a>
+  <a href="#"><button class="cbtn1">HOLD LOG</button></a>
+  <a href="#"><button class="cbtn1">WORK IN PROGRESS</button></a>
+  <a href="#"><button class="cbtne1">HELP</button></a>
+</div>
+<div class="btn-group-2">
+  <a href="#"><button class="cbtns2"><a href="#">PROCESS</button></a>
+  <a href="#"><button class="cbtn2" style="background-color:navy;"><a href="#">PRODUCTION</a></button></a>
+  <a href="#"><button class="cbtn2"><a href="#">MATERIAL</a></button></a>
+  <a href="#"><button class="cbtn2"><a href="#">TRACK & TRACE</a></button></a>
+  <a href="#"><button class="cbtn2"><a href="#">QUALITY</button></a>
+  <a href="#"><button class="cbtn2"><a href="#">MAINTENANCE</button></a>
+  <a href="#"><button class="cbtn2"><a href="#">PERFORMANCE</button></a>
+  <a href="#"><button class="cbtne2"><a href="#">WORKFORCE MGMT</button></a>
+</div>
+<!-- End of Nav Bar Code-->
+
+
+
+</div>
+<!-- End of Bottom Area Code -->
+
 {% endblock %}
