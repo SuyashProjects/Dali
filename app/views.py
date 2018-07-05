@@ -1,12 +1,12 @@
 from django.shortcuts import render_to_response,redirect,render
 from django.utils import timezone
-from .models import Config,Constraint,Shift,Station1,Station2,Station3,Station4,Station5,Station6,Station7,Station8,Station9,Station10
+from .models import Config,Constraint,Shift,Station
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from .forms import Form1,Form2
+from .forms import Form1,Form2,Form3
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
-from operator import attrgetter
+from gen import main
 
 @csrf_exempt
 def form1(request):
@@ -28,7 +28,17 @@ def form1(request):
 
 @csrf_exempt
 def form2(request):
-    if request.method == 'POST':
+    if request.method == 'POST' and 'btnform3':
+      forms = Form3(request.POST)
+      if forms.is_valid():
+        Obj = forms.cleaned_data
+        time1 = Obj['time1']
+        time2 = Obj['time2']
+        time3 = Obj['time3']
+        print(Obj)
+        Shift.objects.filter(name='A').update(time=time1)
+        Shift.objects.filter(name='B').update(time=time2)
+        Shift.objects.filter(name='C').update(time=time3)
       form = Form2(request.POST)
       if form.is_valid():
         Obj = form.cleaned_data
@@ -39,8 +49,9 @@ def form2(request):
       else:
           print('Error')
     form = Form2()
+    forms = Form3()
     view = Config.objects.all().values()
-    return render_to_response( 'app/form2.html',{'form':form,'view':view}, RequestContext(request))
+    return render_to_response( 'app/form2.html',{'form':form,'view':view,'forms':forms}, RequestContext(request))
 
 def sequence(request):
     Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
@@ -48,7 +59,8 @@ def sequence(request):
     Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
     SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
     Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
-    Total_Shift_Time=8
+    Total_Shift_Time=list(Shift.objects.aggregate(Sum('time')).values())[0]
+
     Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
     if(Total_Order>Capacity):
       print('Capacity is being exceeded, reduce orders!')
@@ -69,10 +81,8 @@ def sequence(request):
       SKU5=Config.objects.values('SKU').order_by('color')
       for key in SKU5:
        list1.append(key['SKU'])
-      print(list1)
       for i in list1:
        list2.append(Config.objects.filter(SKU=i).values('ratio')[0]['ratio'])
-      print(list2)
       SKU5 = list(zip(list1, list2))
       for x in range (0,Total_Order//Ratio_Sum):
        for key,value in SKU5:
@@ -80,6 +90,8 @@ def sequence(request):
          Sequence3.append(key)
       for value in Sequence3:
          full.append(Config.objects.filter(SKU=value).values())
+      time = main(Sequence3)
+      print(time)
       #Phase 1
       for i in range(0,SKU_Count):
        SKU=Config.objects.filter(SKU=i+1).values()
@@ -101,4 +113,5 @@ def sequence(request):
          temp.append(Config.objects.filter(SKU=value).values())
       Sequence2 = list(zip(Seq_Num,temp))
       Sequence3 = list(zip(Seq_Num,full))
-    return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3}, RequestContext(request))
+
+    return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3,'time':time}, RequestContext(request))

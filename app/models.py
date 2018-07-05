@@ -8,8 +8,16 @@ class Constraint(models.Model):
     def __str__(self):
         return str(self.name)
 
+class Station(models.Model):
+    time = models.PositiveIntegerField(null=True)
+    def submit(self):
+        self.save()
+    def __str__(self):
+        return str(self.time)
+
 class Config(models.Model):
     SKU = models.AutoField(primary_key=True)
+    Station = models.ManyToManyField(Station, null=True)
     model = models.CharField(max_length=50)
     variant = models.CharField(max_length=50)
     color = models.CharField(max_length=50)
@@ -23,86 +31,6 @@ class Config(models.Model):
         self.save()
     def __str__(self):
         return str(self.SKU)
-
-class Station1(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
-class Station2(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
-class Station3(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
-class Station4(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
-class Station5(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
-class Station6(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
-class Station7(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
-class Station8(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
-class Station9(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
-
-class Station10(models.Model):
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
-    time = models.PositiveIntegerField(null=True)
-    def submit(self):
-        self.save()
-    def __str__(self):
-        return str(self.time)
 
 class Shift(models.Model):
     name = models.CharField(max_length=10)

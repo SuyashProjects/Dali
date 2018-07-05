@@ -1,5 +1,5 @@
 from django import forms
-from .models import Config,Constraint,Shift,Station1,Station2,Station3,Station4,Station5,Station6,Station7,Station8,Station9,Station10
+from .models import Config,Constraint,Shift,Station
 
 class Form1(forms.ModelForm):
     model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -20,3 +20,11 @@ class Form2(forms.ModelForm):
     class Meta:
         model = Config
         fields = ('SKU','quantity','ratio','constraints')
+
+class Form3(forms.ModelForm):
+    time1 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    time2 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    time3 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    class Meta:
+        model = Shift
+        fields = ('time',)
