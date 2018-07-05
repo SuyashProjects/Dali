@@ -1,117 +1,67 @@
 {% extends 'app/base.html' %}
 {% block content %}
-<head><style>
-.bar{
-width:100%;
-height:auto;
-padding-top: 10px;
-}
-.heading{
-width:20%;
-height:auto;
-margin:0 auto 0;
-font-size: 30px;
-font-weight: bold;
-color: white;
-}
-.container
-{
-width:100%;
-height:auto;
-float: left;
-box-sizing: border-box;
-}
-.area1
-{
-width:50%;
-height:auto;
-padding:10px;
-float: left;
-box-sizing: border-box;
-}
-.area2
-{
-width:50%;
-height:auto;
-padding:10px;
-float: left;
-box-sizing: border-box;
-}
-.panel
-{
-  width:100%;
-  height:auto;
-  border:2px solid white;
-  border-radius:2px;
-  background-color: #50515e;
-  padding: 10px;
-  float: left;
-  box-sizing: border-box;
-  color:white;
-}
-.heading2{
-width:20%;
-border: 2px solid white;
-text-align: center;
-height:auto;
-margin:0 auto 0;
-font-size: 20px;
-font-weight: bold;
-color: white;
-padding:3px;
-background-color: #363744 ;
-}
-.table-wrapper-2{
-display: block;
-max-height: 300px;
-overflow-y: auto;
--ms-overflow-style: -ms-autohiding-scrollbar;
-}
-.btn-sub {
-  padding:5px;
-  font-size: 16x;
-  color: #000000;
-  background-color: #C4C4C4;
-  border-color: none;
-}
-.btn-sub:hover,
-.btn-sub:focus,
-.btn-sub:active,
-.btn-sub.active,
-.open .dropdown-toggle.btn-sub {
-  color: #000000;
-  background-color: #EBEBEB;
-  border-color: none;
-}
-.btn-sub:active,
-.btn-sub.active,
-.open .dropdown-toggle.btn-sub {
-  background-image: none;
-}
-.fpanel
-{
-  width:90%;
-  height:auto;
-  border:2px solid white;
-  border-radius:2px;
-  background-color: #50515e;
-  padding: 10px;
-  float: left;
-  box-sizing: border-box;
-  color:white;
-}
-</style></head>
 <!--Start of body content -->
 <!--Start of Header-->
-<div class="bar"><div class="heading">Order Management</div></div>
+<div class="bar"><div class="heading">Order Monitoring</div></div>
 <!--End of Header -->
-<div class="container" style="margin-top: 40px;"><div class="heading2" style=" background-color:black;">
+
+
+<div class="container" style="margin-top: 25px;"><div class="heading2">
 CURRENT SEQUENCE
 </div></div>
+
+
 <div class="container">
-<div class="card" style="margin-left:1%; margin-right:1%; background-color:#696969; color:white; margin-top:15px; border:solid white 2px;">
-<div class="card-body">
- <div class="table-wrapper-2">
+<div class="card" style="height:540px; margin-left:0%; margin-right:0%; background-color:#696969; color:white; margin-top:15px; border:solid white 2px;">
+<div class="card-body" style="height:540px;">
+ <div class="table-wrapper-2" style="height:540px;" >
+<table class="table table-responsive-md table-bordered">
+<thead class="mdb-color lighten-4" style="background-color:#101669 !important; color:white !important;">
+<tr>
+<th class="th-lg">Order ID</th>
+<th class="th-lg">SKU</th>
+<th class="th-lg">Model</th>
+<th class="th-lg">Variant</th>
+<th class="th-lg">Color</th>
+<th class="th-lg">Tank</th>
+<th class="th-lg">Status</th>
+<th class="th-lg">Options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+{% for key,value in Sequence1 %}
+<td>OR_{{ key }}</td>
+{% for value in value %}
+<td>{{ value.SKU }}</td>
+<td>{{ value.model }}</td>
+<td>{{ value.variant }}</td>
+<td>{{ value.color }}</td>
+<td>{{ value.tank }}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</tbody></table>
+</div></div></div>
+</div>
+
+<div class="container">
+<div style="text-align:center; margin-top:10px;">
+<button type="" class="btn-sub" style="">Optimize</button>
+<button type="" class="btn-sub" style="margin-left:20px;">Resequence</button>
+</div>
+</div>
+
+<!--
+
+<div class="container" style="margin-top: 10px;"><div class="heading2" style=" background-color:black;">
+NEW SEQUENCE
+</div></div>
+
+<div class="container">
+<div class="card" style="height:240px; margin-left:0%; margin-right:0%; background-color:#696969; color:white; margin-top:10px; border:solid white 2px;">
+<div class="card-body"style="height:240px;">
+ <div class="table-wrapper-2"style="height:240px;">
 <table class="table table-responsive-md table-bordered">
 <thead class="mdb-color lighten-4" style="background-color:#101669 !important; color:white !important;">
 <tr>
@@ -138,37 +88,37 @@ CURRENT SEQUENCE
 {% endfor %}
 </tbody></table>
 </div></div></div>
-<div class="card" style="margin-left:1%; margin-right:1%; background-color:#696969; color:white; margin-top:15px; border:solid white 2px;">
-<div class="card-body">
- <div class="table-wrapper-2">
-<table class="table table-responsive-md table-bordered">
-<thead class="mdb-color lighten-4" style="background-color:#101669 !important; color:white !important;">
-<tr>
-<th class="th-lg">Order ID</th>
-<th class="th-lg">SKU</th>
-<th class="th-lg">Model</th>
-<th class="th-lg">Variant</th>
-<th class="th-lg">Color</th>
-<th class="th-lg">Tank</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-{% for key,value in Sequence3 %}
-<td>OR_{{ key }}</td>
-{% for value in value %}
-<td>{{ value.SKU }}</td>
-<td>{{ value.model }}</td>
-<td>{{ value.variant }}</td>
-<td>{{ value.color }}</td>
-<td>{{ value.tank }}</td>
-{% endfor %}
-</tr>
-{% endfor %}
-</tbody></table>
-</div></div></div>
-<div style="text-align:center; margin-top:10px;">
-<button type="" class="btn-sub" style="">Optimize</button>
-<button type="" class="btn-sub" style="margin-left:20px;">Resequence</button>
+
+
+-->
+
+<div class="bot bpad">
+<div class="container custom1">
+<div class="blpanel">
+<marquee behavior="scroll" direction="left">No Alerts to show</marquee>
+</div>
+</div>
+
+
+<div class="btn-group-1">
+  <a href="{% url 'form1' %}"><button class="cbtns1">CONFIGURATION</button></a>
+  <a href="{% url 'form2' %}"><button class="cbtn1">PRODUCTION PLAN</button></a>
+  <a href="{% url 'sequence' %}"><button class="cbtn1"  style="background-color:#424100;">ORDER MONITORING</button></a>
+  <a href="#"><button class="cbtn1">LINE MONITORING</button></a>
+  <a href="#"><button class="cbtn1">MACH MONITORING</button></a>
+  <a href="#"><button class="cbtn1">HOLD LOG</button></a>
+  <a href="#"><button class="cbtn1">WORK IN PROGRESS</button></a>
+  <a href="#"><button class="cbtne1">HELP</button></a>
+</div>
+<div class="btn-group-2">
+  <a href="#"><button class="cbtns2"><a href="#">PROCESS</button></a>
+  <a href="#"><button class="cbtn2" style="background-color:navy;"><a href="#">PRODUCTION</a></button></a>
+  <a href="#"><button class="cbtn2"><a href="#">MATERIAL</a></button></a>
+  <a href="#"><button class="cbtn2"><a href="#">TRACK & TRACE</a></button></a>
+  <a href="#"><button class="cbtn2"><a href="#">QUALITY</button></a>
+  <a href="#"><button class="cbtn2"><a href="#">MAINTENANCE</button></a>
+  <a href="#"><button class="cbtn2"><a href="#">PERFORMANCE</button></a>
+  <a href="#"><button class="cbtne2"><a href="#">WORKFORCE MGMT</button></a>
+</div>
 </div>
 {% endblock %}
