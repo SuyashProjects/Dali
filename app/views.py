@@ -3,7 +3,7 @@ from django.utils import timezone
 from .models import Config,Constraint,Shift,Station
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from .forms import Form1,Form2,Form3,Station
+from .forms import Form1,Form2,Form3,StnForm
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
 from gen import main
@@ -112,9 +112,9 @@ def sequence(request):
 @csrf_exempt
 def Line(request):
  if request.method == 'POST':
-   form = Station(request.POST)
+   form = StnForm(request.POST)
    if form.is_valid():
     form = form.save()
     form.save()
- form = Station()
+ form = StnForm()
  return render_to_response( 'app/Line.html',{'form':form}, RequestContext(request))

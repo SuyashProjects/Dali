@@ -29,7 +29,7 @@ class Form3(forms.ModelForm):
         model = Shift
         fields = ('time',)
 
-class Station(forms.ModelForm):
+class StnForm(forms.ModelForm):
     SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
     stn1 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
     stn2 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
