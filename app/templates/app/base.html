@@ -501,11 +501,29 @@ fieldset[disabled] .btn-sub.active {
 }
 </style></head>
 <body>
-
+<div id="date"></div>
+<div id="time"></div>
 {% block content %}{% endblock %}
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 {% block javascript %}
 {% endblock %}
+<script>
+$(document).ready(function(){
+    var timer = setInterval(clock, 1)
+    function clock(){
+      var current = new Date()
+      var mm = current.getMonth() + 1;
+      var dd = current.getDate();
+      var yyyy = current.getFullYear();
+      var date = dd + '/' + mm + '/' + yyyy;
+      var hh = current.getHours();
+      var m = current.getMinutes();
+      var ss = current.getSeconds();
+      var time = hh + '/' + m + '/' + ss;
+      $("#date").html(date);
+      $("#time").html(time);
+    }
+});
+</script>
 </body></html>
