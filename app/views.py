@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response,redirect,render
 from django.utils import timezone
+from django.contrib import messages
 from .models import Config,Constraint,Shift,Station
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
@@ -10,21 +11,24 @@ from gen import main
 
 @csrf_exempt
 def form1(request):
-    if request.method == 'POST':
-      form = Form1(request.POST)
-      if form.is_valid():
-          Obj = form.cleaned_data
-          model = Obj['model']
-          variant = Obj['variant']
-          color = Obj['color']
-          if (Config.objects.filter(model=model,variant=variant,color=color).exists()):
-           print('sku exists')
-          else:
-           form = form.save()
-           form.save()
-    form = Form1()
-    view = Config.objects.all().values()
-    return render_to_response( 'app/form1.html',{'form':form, 'view':view}, RequestContext(request))
+ if request.method == 'POST':
+  form=Form1(request.POST)
+  if form.is_valid():
+   Obj=form.cleaned_data
+   model=Obj['model']
+   variant=Obj['variant']
+   color=Obj['color']
+   if (Config.objects.filter(model=model,variant=variant,color=color).exists()):
+
+    print('SKU Exists')
+   else:
+    form=form.save()
+    form.save()
+  else:
+   print('Invalid Form')
+ form = Form1()
+ view = Config.objects.all().values()
+ return render_to_response('app/form1.html',{'form':form,'view':view},RequestContext(request))
 
 @csrf_exempt
 def form2(request):
@@ -37,7 +41,7 @@ def form2(request):
         ratio = Obj['ratio']
         Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio)
       else:
-          print('Error')
+        print('Error')
     form = Form2()
     forms = Form3()
     view = Config.objects.all().values()
