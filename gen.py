@@ -3,12 +3,12 @@ from numpy import array
 from numpy import amax
 from numpy import zeros
 
-def main(Sequence3,tl):
+def main(Sequence3,tq,tl):
    tl=tl
    a=array(tl)
    print("Array of Station TAKT Times:")
    print(a)
-   tq=([10,20,30])
+   tq=tq
    q=array(tq)
    print("Array of Quantities:")
    print(q)

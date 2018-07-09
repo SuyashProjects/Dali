@@ -28,3 +28,19 @@ class Form3(forms.ModelForm):
     class Meta:
         model = Shift
         fields = ('time',)
+
+class Station(forms.ModelForm):
+    SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn1 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn2 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn3 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn4 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn5 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn6 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn7 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn8 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn9 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    stn10 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    class Meta:
+        model = Station
+        fields = ('SKU','stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')

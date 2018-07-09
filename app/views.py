@@ -3,7 +3,7 @@ from django.utils import timezone
 from .models import Config,Constraint,Shift,Station
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from .forms import Form1,Form2,Form3
+from .forms import Form1,Form2,Form3,Station
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
 from gen import main
@@ -49,6 +49,7 @@ def sequence(request):
     Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
     SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
     tl = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
+    tq = Config.objects.exclude(quantity__isnull=True).values_list('quantity',flat=True)
     for i in range(0,SKU_Count):
      if Config.objects.filter(SKU=i+1,quantity=None,ratio=None).exists():
          SKU_Count=SKU_Count-1
@@ -102,8 +103,18 @@ def sequence(request):
          Sequence2.append(key)
       for value in Sequence2:
          temp.append(Config.objects.filter(SKU=value).values())
-      time = main(Sequence3,tl)
+      time = main(Sequence3,tq,tl)
       Sequence2 = list(zip(Seq_Num,temp))
       Sequence3 = list(zip(Seq_Num,full))
 
     return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3,'time':time}, RequestContext(request))
+
+@csrf_exempt
+def Line(request):
+ if request.method == 'POST':
+   form = Station(request.POST)
+   if form.is_valid():
+    form = form.save()
+    form.save()
+ form = Station()
+ return render_to_response( 'app/Line.html',{'form':form}, RequestContext(request))
