@@ -149,8 +149,8 @@ SKU STATION TAKT TIMES
 
 <div class="container" style="text-align:center; padding:30px;">
 <div class="Sel">
-Select SKU: <input type='text' id='SKU'>
-</div>
+Select SKU: <input class="form-control" type='text' id='Stn'>
+  </div>
 </div>
 
 <!-- End of Content Header --->
@@ -159,45 +159,45 @@ Select SKU: <input type='text' id='SKU'>
 <!--Image-->
 <div class="container" style=" position:relative; margin-bottom:30px;">
 <img src="../static/line.PNG">
-<div class="iblock1">
-Stn 1:<br>
-ABC
+<div id="iblock1" class="iblock1">
+Stn 1:<br><div id="stn1">
+ABC</div>
 </div>
-<div class="iblock2">
-Stn 2:<br>
-ABC
+<div id="iblock2" class="iblock2">
+Stn 2:<br><div id="stn2">
+ABC</div>
 </div>
-<div class="iblock3">
-Stn 3:<br>
-ABC
+<div id="iblock3" class="iblock3">
+Stn 3:<br><div id="stn3">
+ABC</div>
 </div>
-<div class="iblock4">
-Stn 4:<br>
-ABC
+<div id="iblock4" class="iblock4">
+Stn 4:<br><div id="stn4">
+ABC</div>
 </div>
-<div class="iblock5">
-Stn 5:<br>
-ABC
+<div id="iblock5" class="iblock5">
+Stn 5:<br><div id="stn5">
+ABC</div>
 </div>
-<div class="iblock6">
-Stn 6:<br>
-ABC
+<div id="iblock6" class="iblock6">
+Stn 6:<br><div id="stn6">
+ABC</div>
 </div>
-<div class="iblock7">
-Stn 7:<br>
-ABC
+<div id="iblock7" class="iblock7">
+Stn 7:<br><div id="stn7">
+ABC</div>
 </div>
-<div class="iblock8">
-Stn 8:<br>
-ABC
+<div id="iblock8" class="iblock8">
+Stn 8:<br><div id="stn8">
+ABC</div>
 </div>
-<div class="iblock9">
-Stn 9:<br>
-ABC
+<div id="iblock9" class="iblock9">
+Stn 9:<br><div id="stn9">
+ABC</div>
 </div>
-<div class="iblock10">
-Stn 10:<br>
-ABC
+<div id="iblock10" class="iblock10">
+Stn 10:<br><div id="stn10">
+ABC</div>
 </div>
 </div>
 
@@ -253,4 +253,29 @@ ABC
 </div>
 <!-- End of Bottom Area Code -->
 
+{% endblock %}
+{% block javascript %}
+<script>
+var sku;
+  $("#Stn").change(function () {
+    sku = $(this).val();
+    console.log(sku)  // get the selected country ID from the HTML input
+    $.ajax({                       // initialize an AJAX request
+      url: '/ajax/populate/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+      data: {'sku': sku       // add the country id to the GET parameters
+      },
+      success: function (data) {
+        console.log(data)  // `data` is the return of the `load_cities` view function
+        $("#stn1").html(data['stn1']);
+        $("#stn2").html(data['stn2']);
+        $("#stn3").html(data['stn3']);
+        $("#stn4").html(data['stn4']);
+        $("#stn5").html(data['stn5']);
+        $("#stn6").html(data['stn6']);
+        $("#stn7").html(data['stn7']);
+        $("#stn8").html(data['stn8']);
+        $("#stn9").html(data['stn9']);
+        $("#stn10").html(data['stn10']);  // replace the contents of the city input with the data that came from the server
+}});});
+</script>
 {% endblock %}

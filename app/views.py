@@ -118,3 +118,29 @@ def Line(request):
     form.save()
  form = StnForm()
  return render_to_response( 'app/Line.html',{'form':form}, RequestContext(request))
+
+def populate(request):
+    sku = request.GET.get('sku', None)
+    stn1 = Station.objects.filter(SKU=sku).values('stn1')[0]['stn1']
+    stn2 = Station.objects.filter(SKU=sku).values('stn2')[0]['stn2']
+    stn3 = Station.objects.filter(SKU=sku).values('stn3')[0]['stn3']
+    stn4 = Station.objects.filter(SKU=sku).values('stn4')[0]['stn4']
+    stn5 = Station.objects.filter(SKU=sku).values('stn5')[0]['stn5']
+    stn6 = Station.objects.filter(SKU=sku).values('stn6')[0]['stn6']
+    stn7 = Station.objects.filter(SKU=sku).values('stn7')[0]['stn7']
+    stn8 = Station.objects.filter(SKU=sku).values('stn8')[0]['stn8']
+    stn9 = Station.objects.filter(SKU=sku).values('stn9')[0]['stn9']
+    stn10 = Station.objects.filter(SKU=sku).values('stn10')[0]['stn10']
+    data = {
+        'stn1' : stn1,
+        'stn2' : stn2,
+        'stn3' : stn3,
+        'stn4' : stn4,
+        'stn5' : stn5,
+        'stn6' : stn6,
+        'stn7' : stn7,
+        'stn8' : stn8,
+        'stn9' : stn9,
+        'stn10' : stn10,
+        }
+    return JsonResponse(data)

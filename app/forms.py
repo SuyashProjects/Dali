@@ -30,7 +30,11 @@ class Form3(forms.ModelForm):
         fields = ('time',)
 
 class StnForm(forms.ModelForm):
-    SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    def __init__(self, *args, **kwargs):
+       super(StnForm, self).__init__(*args, **kwargs)
+       self.fields['SKU'].empty_label = "Select SKU"
+
+    SKU = forms.ModelChoiceField(queryset=Config.objects.values_list('SKU', flat=True),widget=forms.Select(attrs={'class':'form-control'}))
     stn1 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
     stn2 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
     stn3 = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
