@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import Config,Constraint,Shift,Station
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from .forms import Form1,Edit,Form2,Form3,StnForm
+from .forms import Form1,Edit,Delete,Form2,Form3,StnForm
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
 from django.core import serializers
@@ -21,7 +21,6 @@ def form1(request):
    variant=Obj['variant']
    color=Obj['color']
    if (Config.objects.filter(model=model,variant=variant,color=color).exists()):
-
     print('SKU Exists')
    else:
     form=form.save()
@@ -34,23 +33,49 @@ def form1(request):
 
 @csrf_exempt
 def edit(request):
- data = dict()
- if request.method == 'POST':
-  form = Edit(request.POST)
-  if form.is_valid():
-            form.save()
-            data['form_is_valid'] = True
+  data = dict()
+  if request.method == 'POST':
+   form = Edit(request.POST)
+   if form.is_valid():
+    data['form_is_valid'] = True
+    Obj = form.cleaned_data
+    SKU = Obj['SKU']
+    model = Obj['model']
+    variant = Obj['variant']
+    color = Obj['color']
+    tank = Obj['tank']
+    time = Obj['time']
+    description = Obj['description']
+    Config.objects.filter(SKU=SKU).update(model=model,variant=variant,color=color,tank=tank,time=time,description=description)
+    view = Config.objects.all().values()
+    data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
+   else:
+    data['form_is_valid'] = False
   else:
-            data['form_is_valid'] = False
- else:
-    form = Edit()
+   form = Edit()
+   context = {'form': form}
+   data['html_form'] = render_to_string('app/edit_popup.html',context,request=request)
+  return JsonResponse(data)
 
-    context = {'form': form}
-    data['html_form'] = render_to_string('books/includes/partial_book_create.html',
-        context,
-        request=request
-    )
- return JsonResponse(data)
+@csrf_exempt
+def delete(request):
+  data = dict()
+  if request.method == 'POST':
+   form = Delete(request.POST)
+   if form.is_valid():
+    data['form_is_valid'] = True
+    Obj = form.cleaned_data
+    SKU = Obj['SKU']
+    Config.objects.filter(SKU=SKU).delete()
+    view = Config.objects.all().values()
+    data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
+   else:
+    data['form_is_valid'] = False
+  else:
+   form = Delete()
+   context = {'form': form}
+   data['html_form'] = render_to_string('app/delete_popup.html',context,request=request)
+  return JsonResponse(data)
 
 @csrf_exempt
 def form2(request):

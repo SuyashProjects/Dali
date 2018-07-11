@@ -24,6 +24,12 @@ class Edit(forms.ModelForm):
         model = Config
         fields = ('SKU','model','variant','color','tank','time','description')
 
+class Delete(forms.ModelForm):
+    SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    class Meta:
+        model = Config
+        fields = ('SKU',)
+
 class Form2(forms.ModelForm):
     SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
     quantity = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))

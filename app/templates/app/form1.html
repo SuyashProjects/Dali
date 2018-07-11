@@ -106,7 +106,7 @@ EXISTING SKU CONFIGURATIONS
 <th class="th-lg">TAKT Time</th>
 <th class="th-lg">Additional</th>
 </tr>
-</thead><tbody>
+</thead><tbody id="tbody">
 <tr>
 {% for key in view %}
 <td>{{key.SKU}}</td>
@@ -122,8 +122,7 @@ EXISTING SKU CONFIGURATIONS
 </div></div></div>
 <div style="text-align:center; margin-top:10px;">
 <button type="button" class="btn-sub edit" style="">Edit</button>
-<button type="" class="btn-sub" style="margin-left:20px;">Delete</button>
-<button type="" class="btn-sub" style="margin-left:20px;">Options</button>
+<button type="button" class="btn-sub delete" style="margin-left:20px;">Delete</button>
 </div>
 </div>
 <!-- End of SKU Table -->
@@ -168,32 +167,92 @@ EXISTING SKU CONFIGURATIONS
   <a href="#"><button class="cbtne2">WORKFORCE MGMT</button></a>
 </div>
 <!-- End of Nav Bar Code-->
-
-
-
 </div>
 <!-- End of Bottom Area Code -->
 <div class="modal fade" id="modaledit">
     <div class="modal-dialog">
       <div class="modal-content">
       </div></div>
+      <div class="modal fade" id="modaldelete">
+          <div class="modal-dialog">
+            <div class="modal-content">
+            </div></div>
 {% endblock %}
 {% block javascript %}
 <script>
 $(function () {
-  $(".edit").click(function () {
+ var EditForm = function () {
+  var btn = $(this);
     $.ajax({
       url: '/ajax/edit/',
       type: 'get',
       dataType: 'json',
       beforeSend: function () {
-        $("#modaledit").modal("show");
+      $("#modaledit .modal-content").html("");
+      $("#modaledit").modal("show");
       },
       success: function (data) {
         $("#modaledit .modal-content").html(data.html_form);
       }
     });
+  };
+ var saveForm = function () {
+    var form = $(this);
+    $.ajax({
+      url: form.attr("action"),
+      data: form.serialize(),
+      type: form.attr("method"),
+      dataType: 'json',
+      success: function (data) {
+      if (data.form_is_valid) {
+        $("#tbody").html(data.sku_list);
+          $("#modaledit").modal("hide");
+        }
+      else {
+       $("#modaledit .modal-content").html(data.html_form);
+        }
+      }
+    });
+  return false;
+    };
+    var DelForm = function () {
+     var btn = $(this);
+       $.ajax({
+         url: '/ajax/delete/',
+         type: 'get',
+         dataType: 'json',
+         beforeSend: function () {
+         $("#modaledit .modal-content").html("");
+         $("#modaledit").modal("show");
+         },
+         success: function (data) {
+           $("#modaledit .modal-content").html(data.html_form);
+         }
+       });
+     };
+     var saveForm2 = function () {
+        var form = $(this);
+        $.ajax({
+          url: form.attr("action"),
+          data: form.serialize(),
+          type: form.attr("method"),
+          dataType: 'json',
+          success: function (data) {
+          if (data.form_is_valid) {
+            $("#tbody").html(data.sku_list);
+              $("#modaldelete").modal("hide");
+            }
+          else {
+           $("#modaldelete .modal-content").html(data.html_form);
+            }
+          }
+        });
+        return false;
+          };
+  $(".edit").click(EditForm);
+  $("#modaledit").on("submit", ".edit_popup", saveForm);
+  $(".delete").click(DelForm);
+  $("#modaldelete").on("submit", ".edit_delete", saveForm2);
   });
-});
 </script>
 {% endblock %}
