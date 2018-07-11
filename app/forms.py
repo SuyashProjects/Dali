@@ -12,6 +12,18 @@ class Form1(forms.ModelForm):
         model = Config
         fields = ('model','variant','color','tank','time','description')
 
+class Edit(forms.ModelForm):
+    SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    variant = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    color = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    tank = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    time = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
+    description = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}),required=False)
+    class Meta:
+        model = Config
+        fields = ('SKU','model','variant','color','tank','time','description')
+
 class Form2(forms.ModelForm):
     SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
     quantity = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))

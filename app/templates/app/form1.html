@@ -98,7 +98,7 @@ EXISTING SKU CONFIGURATIONS
 <table class="table table-responsive-md table-bordered">
 <thead class="mdb-color lighten-4" style="background-color:#101669 !important;">
 <tr>
-<th>S.No</th>
+<th class="th-lg">SKU</th>
 <th class="th-lg">Model</th>
 <th class="th-lg">Variant</th>
 <th class="th-lg">Color</th>
@@ -121,7 +121,7 @@ EXISTING SKU CONFIGURATIONS
 </table>
 </div></div></div>
 <div style="text-align:center; margin-top:10px;">
-<button type="" class="btn-sub" style="">Modify</button>
+<button type="button" class="btn-sub edit" style="">Edit</button>
 <button type="" class="btn-sub" style="margin-left:20px;">Delete</button>
 <button type="" class="btn-sub" style="margin-left:20px;">Options</button>
 </div>
@@ -173,5 +173,27 @@ EXISTING SKU CONFIGURATIONS
 
 </div>
 <!-- End of Bottom Area Code -->
-
+<div class="modal fade" id="modaledit">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div></div>
+{% endblock %}
+{% block javascript %}
+<script>
+$(function () {
+  $(".edit").click(function () {
+    $.ajax({
+      url: '/ajax/edit/',
+      type: 'get',
+      dataType: 'json',
+      beforeSend: function () {
+        $("#modaledit").modal("show");
+      },
+      success: function (data) {
+        $("#modaledit .modal-content").html(data.html_form);
+      }
+    });
+  });
+});
+</script>
 {% endblock %}

@@ -1,12 +1,14 @@
-from django.shortcuts import render_to_response,redirect,render
+from django.shortcuts import render_to_response,redirect,render,get_object_or_404
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.contrib import messages
 from .models import Config,Constraint,Shift,Station
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from .forms import Form1,Form2,Form3,StnForm
+from .forms import Form1,Edit,Form2,Form3,StnForm
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
+from django.core import serializers
 from gen import main
 
 @csrf_exempt
@@ -29,6 +31,26 @@ def form1(request):
  form = Form1()
  view = Config.objects.all().values()
  return render_to_response('app/form1.html',{'form':form,'view':view},RequestContext(request))
+
+@csrf_exempt
+def edit(request):
+ data = dict()
+ if request.method == 'POST':
+  form = Edit(request.POST)
+  if form.is_valid():
+            form.save()
+            data['form_is_valid'] = True
+  else:
+            data['form_is_valid'] = False
+ else:
+    form = Edit()
+
+    context = {'form': form}
+    data['html_form'] = render_to_string('books/includes/partial_book_create.html',
+        context,
+        request=request
+    )
+ return JsonResponse(data)
 
 @csrf_exempt
 def form2(request):
@@ -121,20 +143,21 @@ def Line(request):
     form = form.save()
     form.save()
  form = StnForm()
- return render_to_response( 'app/Line.html',{'form':form}, RequestContext(request))
+ return render_to_response('app/Line.html',{'form':form}, RequestContext(request))
 
 def populate(request):
     sku = request.GET.get('sku', None)
-    stn1 = Station.objects.filter(SKU=sku).values('stn1')[0]['stn1']
-    stn2 = Station.objects.filter(SKU=sku).values('stn2')[0]['stn2']
-    stn3 = Station.objects.filter(SKU=sku).values('stn3')[0]['stn3']
-    stn4 = Station.objects.filter(SKU=sku).values('stn4')[0]['stn4']
-    stn5 = Station.objects.filter(SKU=sku).values('stn5')[0]['stn5']
-    stn6 = Station.objects.filter(SKU=sku).values('stn6')[0]['stn6']
-    stn7 = Station.objects.filter(SKU=sku).values('stn7')[0]['stn7']
-    stn8 = Station.objects.filter(SKU=sku).values('stn8')[0]['stn8']
-    stn9 = Station.objects.filter(SKU=sku).values('stn9')[0]['stn9']
-    stn10 = Station.objects.filter(SKU=sku).values('stn10')[0]['stn10']
+    stn = Station.objects.filter(SKU=sku)
+    stn1 = stn.values('stn1')[0]['stn1']
+    stn2 = stn.values('stn2')[0]['stn2']
+    stn3 = stn.values('stn3')[0]['stn3']
+    stn4 = stn.values('stn4')[0]['stn4']
+    stn5 = stn.values('stn5')[0]['stn5']
+    stn6 = stn.values('stn6')[0]['stn6']
+    stn7 = stn.values('stn7')[0]['stn7']
+    stn8 = stn.values('stn8')[0]['stn8']
+    stn9 = stn.values('stn9')[0]['stn9']
+    stn10 = stn.values('stn10')[0]['stn10']
     data = {
         'stn1' : stn1,
         'stn2' : stn2,
