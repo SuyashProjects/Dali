@@ -153,7 +153,7 @@ CURRENT ORDERS
 <div style="text-align:center; margin-top:10px;">
 <button type="button" class="btn-sub delete" style="margin-left:20px;">Delete</button>
 <button type="" class="btn-sub" style="margin-left:20px;">Validate</button>
-<button type="" class="btn-sub" style="margin-left:20px;">Gen Seq</button>
+<button id="Gen" type="button" onclick="Disable()" class="btn-sub" style="margin-left:20px;">Gen Seq</button>
 </div>
 </div>
 
@@ -193,6 +193,9 @@ CURRENT ORDERS
 {% endblock %}
 {% block javascript %}
 <script>
+    function Disable() {
+      document.getElementById('Gen').disabled = true;
+    };
 $(function () {
     var DelForm = function () {
      var btn = $(this);
