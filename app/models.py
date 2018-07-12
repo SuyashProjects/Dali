@@ -10,15 +10,15 @@ class Constraint(models.Model):
 
 class Config(models.Model):
     SKU = models.AutoField(primary_key=True)
-    model = models.CharField(max_length=50)
-    variant = models.CharField(max_length=50)
-    color = models.CharField(max_length=50)
+    model = models.CharField(max_length=6)
+    variant = models.CharField(max_length=1)
+    color = models.CharField(max_length=20)
     quantity = models.PositiveIntegerField(blank=True,null=True)
     time = models.PositiveIntegerField(null=True)
     ratio = models.PositiveIntegerField(default=0,null=True)
     constraints = models.ManyToManyField(Constraint, related_name='Constraint',blank=True)
-    tank = models.CharField(max_length=50)
-    description = models.CharField(max_length=100,default=None,blank=True,null=True)
+    tank = models.CharField(max_length=10)
+    description = models.CharField(max_length=50,default=None,blank=True,null=True)
     def submit(self):
         self.save()
     def __str__(self):

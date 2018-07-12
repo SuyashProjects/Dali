@@ -102,8 +102,9 @@ def sequence(request):
     tl = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
     tq = Config.objects.exclude(quantity__isnull=True).values_list('quantity',flat=True)
     for i in range(0,SKU_Count):
-     if Config.objects.filter(SKU=i+1,quantity=None,ratio=None).exists():
+     if Config.objects.filter(SKU=i+1,quantity=None,ratio=0).exists():
          SKU_Count=SKU_Count-1
+    print(SKU_Count)
     Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
     Total_Shift_Time=list(Shift.objects.aggregate(Sum('time')).values())[0]
     Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)

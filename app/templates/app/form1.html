@@ -172,11 +172,11 @@ EXISTING SKU CONFIGURATIONS
 <div class="modal fade" id="modaledit">
     <div class="modal-dialog">
       <div class="modal-content">
-      </div></div>
+      </div></div></div>
       <div class="modal fade" id="modaldelete">
           <div class="modal-dialog">
             <div class="modal-content">
-            </div></div>
+            </div></div></div>
 {% endblock %}
 {% block javascript %}
 <script>
@@ -222,11 +222,11 @@ $(function () {
          type: 'get',
          dataType: 'json',
          beforeSend: function () {
-         $("#modaledit .modal-content").html("");
-         $("#modaledit").modal("show");
+         $("#modaldelete .modal-content").html("");
+         $("#modaldelete").modal("show");
          },
          success: function (data) {
-           $("#modaledit .modal-content").html(data.html_form);
+           $("#modaldelete .modal-content").html(data.html_form);
          }
        });
      };
@@ -252,7 +252,7 @@ $(function () {
   $(".edit").click(EditForm);
   $("#modaledit").on("submit", ".edit_popup", saveForm);
   $(".delete").click(DelForm);
-  $("#modaldelete").on("submit", ".edit_delete", saveForm2);
+  $("#modaldelete").on("submit", ".delete_popup", saveForm2);
   });
 </script>
 {% endblock %}
