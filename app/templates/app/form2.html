@@ -53,7 +53,7 @@ Production Plan
     </div>
    </div>
    <div class="col-xs-2"  style=" margin-left:20px;padding-top:18px; text-align: center;">
-   <button type="submit" class="btn-sub">Add New</button>
+   <button type="submit" class="btn-sub" name="config">Add New</button>
    </div>
 
 
@@ -100,7 +100,7 @@ Production Plan
  </div>
 </div>
 <div class="col-xs-2"  style=" margin-left:20px;padding-top:18px; text-align: center;">
-<button type="submit" class="btn-sub">Submit</button>
+<button type="submit" class="btn-sub" name="shift">Submit</button>
 </div>
 
   </div>
@@ -151,8 +151,7 @@ CURRENT ORDERS
 </div></div></div>
 
 <div style="text-align:center; margin-top:10px;">
-<button type="" class="btn-sub" style="">Edit</button>
-<button type="" class="btn-sub" style="margin-left:20px;">Delete</button>
+<button type="button" class="btn-sub delete" style="margin-left:20px;">Delete</button>
 <button type="" class="btn-sub" style="margin-left:20px;">Validate</button>
 <button type="" class="btn-sub" style="margin-left:20px;">Gen Seq</button>
 </div>
@@ -187,7 +186,50 @@ CURRENT ORDERS
   <a href="#"><button class="cbtne2"><a href="#">WORKFORCE MGMT</button></a>
 </div>
 </div>
-
+<div class="modal fade" id="modaldelete">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div></div></div>
 {% endblock %}
 {% block javascript %}
+<script>
+$(function () {
+    var DelForm = function () {
+     var btn = $(this);
+       $.ajax({
+         url: '/ajax/delete/',
+         type: 'get',
+         dataType: 'json',
+         beforeSend: function () {
+         $("#modaldelete .modal-content").html("");
+         $("#modaldelete").modal("show");
+         },
+         success: function (data) {
+           $("#modaldelete .modal-content").html(data.html_form);
+         }
+       });
+     };
+     var saveForm2 = function () {
+        var form = $(this);
+        $.ajax({
+          url: form.attr("action"),
+          data: form.serialize(),
+          type: form.attr("method"),
+          dataType: 'json',
+          success: function (data) {
+          if (data.form_is_valid) {
+            $("#tbody").html(data.sku_list);
+              $("#modaldelete").modal("hide");
+            }
+          else {
+           $("#modaldelete .modal-content").html(data.html_form);
+            }
+          }
+        });
+        return false;
+          };
+  $(".delete").click(DelForm);
+  $("#modaldelete").on("submit", ".delete_popup", saveForm2);
+  });
+</script>
 {% endblock %}

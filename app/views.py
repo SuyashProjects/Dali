@@ -159,7 +159,7 @@ def sequence(request):
       Sequence2 = list(zip(Seq_Num,temp))
       Sequence3 = list(zip(Seq_Num,full))
 
-    return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3,'time':time}, RequestContext(request))
+    return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3}, RequestContext(request))
 
 @csrf_exempt
 def Line(request):
