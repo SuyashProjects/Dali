@@ -13,6 +13,7 @@ from gen import main
 
 @csrf_exempt
 def form1(request):
+ data = dict()
  if request.method == 'POST':
   form=Form1(request.POST)
   if form.is_valid():
@@ -21,7 +22,8 @@ def form1(request):
    variant=Obj['variant']
    color=Obj['color']
    if (Config.objects.filter(model=model,variant=variant,color=color).exists()):
-    print('SKU Exists')
+    data['Output'] = 'This configuration already exists.'
+    return JsonResponse(data)
    else:
     form=form.save()
     form.save()
@@ -93,6 +95,18 @@ def form2(request):
     forms = Form3()
     view = Config.objects.all().values()
     return render_to_response( 'app/form2.html',{'form':form,'view':view,'forms':forms}, RequestContext(request))
+
+def validate(request):
+ data = dict()
+ Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
+ Total_Shift_Time=list(Shift.objects.aggregate(Sum('time')).values())[0]
+ Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
+ Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
+ if(Total_Order>Capacity):
+  data['Output'] = 'Capacity is being exceeded, Reduce orders!'
+ else:
+  data['Output'] = 'Orders are within capacity, Sequence can now be generated!'
+ return JsonResponse(data)
 
 def sequence(request):
     Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]

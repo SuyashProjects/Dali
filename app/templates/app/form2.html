@@ -18,8 +18,8 @@ Production Plan
 
   <form method="POST">{% csrf_token %}
    <div class="form-group row">
-     <div class="col-xs-1" style="margin-left:20px; margin-right:10px; font-size:16px; font-weight:800;">
-     New Order:
+     <div class="col-xs-1" style="margin-left:20px;margin-top:15px; margin-right:25px; font-size:16px; font-weight:800;">
+     Place/Edit Orders:
      </div>
      <div class="col-xs-2">
      <label>Enter SKU</label>
@@ -53,7 +53,7 @@ Production Plan
     </div>
    </div>
    <div class="col-xs-2"  style=" margin-left:20px;padding-top:18px; text-align: center;">
-   <button type="submit" class="btn-sub" name="config">Add New</button>
+   <button type="submit" class="btn-sub" name="config">Submit</button>
    </div>
 
 
@@ -70,8 +70,9 @@ Production Plan
 <div class="panel">
 
   <div class="form-group row">
-    <div class="col-xs-2" style="margin-left:15px;margin-right:15px;font-size:16px; font-weight:800;">
+    <div class="col-xs-2" style="margin-left:15px;margin-top:15px;margin-right:10px;font-size:16px; font-weight:800;">
     Shift Duration:
+    (In Hours)
     </div>
     <div class="col-xs-2">
     <label>First Shift</label>
@@ -152,15 +153,15 @@ CURRENT ORDERS
 
 <div style="text-align:center; margin-top:10px;">
 <button type="button" class="btn-sub delete" style="margin-left:20px;">Delete</button>
-<button type="" class="btn-sub" style="margin-left:20px;">Validate</button>
-<button id="Gen" type="button" onclick="Disable()" class="btn-sub" style="margin-left:20px;">Gen Seq</button>
+<button id="val" type="button" onclick="Disable()" class="btn-sub validate" style="margin-left:20px;">Validate</button>
+<a href="{% url 'sequence' %}"><button type="button" class="btn-sub" style="margin-left:20px;">Gen Seq</button></a>
 </div>
 </div>
 
 <div class="bot bpad">
 <div class="container custom1">
 <div class="blpanel">
-<marquee behavior="scroll" direction="left">No Alerts to show</marquee>
+<marquee id="ticker" behavior="scroll" direction="left">No Alerts to show</marquee>
 </div>
 </div>
 
@@ -193,10 +194,21 @@ CURRENT ORDERS
 {% endblock %}
 {% block javascript %}
 <script>
-    function Disable() {
-      document.getElementById('Gen').disabled = true;
-    };
+function Disable() {
+document.getElementById('val').disabled = true;
+};
 $(function () {
+  var Validate = function () {
+   var btn = $(this);
+     $.ajax({
+       url: '/ajax/validate/',
+       type: 'get',
+       dataType: 'json',
+       success: function (data) {
+         $("#ticker").html(data['Output']);
+       }
+     });
+   };
     var DelForm = function () {
      var btn = $(this);
        $.ajax({
@@ -231,6 +243,7 @@ $(function () {
         });
         return false;
           };
+  $(".validate").click(Validate);
   $(".delete").click(DelForm);
   $("#modaldelete").on("submit", ".delete_popup", saveForm2);
   });

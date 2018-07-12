@@ -26,24 +26,24 @@ class Config(models.Model):
 
 class Station(models.Model):
     SKU = models.ForeignKey(Config, on_delete=models.CASCADE)
-    stn1 = models.PositiveIntegerField(null=True)
-    stn2 = models.PositiveIntegerField(null=True)
-    stn3 = models.PositiveIntegerField(null=True)
-    stn4 = models.PositiveIntegerField(null=True)
-    stn5 = models.PositiveIntegerField(null=True)
-    stn6 = models.PositiveIntegerField(null=True)
-    stn7 = models.PositiveIntegerField(null=True)
-    stn8 = models.PositiveIntegerField(null=True)
-    stn9 = models.PositiveIntegerField(null=True)
-    stn10 = models.PositiveIntegerField(null=True)
+    stn1 = models.PositiveIntegerField(default=0,null=True)
+    stn2 = models.PositiveIntegerField(default=0,null=True)
+    stn3 = models.PositiveIntegerField(default=0,null=True)
+    stn4 = models.PositiveIntegerField(default=0,null=True)
+    stn5 = models.PositiveIntegerField(default=0,null=True)
+    stn6 = models.PositiveIntegerField(default=0,null=True)
+    stn7 = models.PositiveIntegerField(default=0,null=True)
+    stn8 = models.PositiveIntegerField(default=0,null=True)
+    stn9 = models.PositiveIntegerField(default=0,null=True)
+    stn10 = models.PositiveIntegerField(default=0,null=True)
     def submit(self):
         self.save()
     def __str__(self):
         return str(self.SKU)
 
 class Shift(models.Model):
-    name = models.CharField(max_length=10)
-    time = models.PositiveIntegerField(null=True,default=8)
+    name = models.CharField(max_length=5)
+    time = models.PositiveIntegerField(null=True,default=7)
     def submit(self):
         self.save()
     def __str__(self):
