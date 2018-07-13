@@ -2,6 +2,8 @@ from numpy import sum
 from numpy import array
 from numpy import amax
 from numpy import zeros
+from numpy import unique
+
 
 def main(Sequence3,tq,tl):
    tl=tl
@@ -65,3 +67,78 @@ def main(Sequence3,tq,tl):
    print("Total Time taken:")
    print(Total_time)
    return Total_time
+
+def sub(tq,tr):
+   tempQuants=tq
+   Quants=array(tempQuants)
+
+   tempRatio=tr
+   Ratio=array(tempRatio)
+
+   tempSKU=tsku
+   SKU=array(tempSKU)
+
+   tSkips=([0,0,0])
+   Skips=array(tSkips)
+
+   tStrips=([0,0,0])
+   Strips=array(tStrips)
+
+   TQuant=sum(tempQuants)
+   #print(TQuant)
+
+   Seq=zeros(3*TQuant)
+
+   sz=len(tempSKU)
+
+   #print(hm)
+
+
+   j=0
+
+   Rtemp=array(tempRatio)
+
+   qTemp=array(tempQuants)
+
+   Stemp=array(tempSKU)
+
+   S1temp=array(tSkips)
+
+   S2temp=array(tStrips)
+
+
+
+   print("The Sequence:")
+   print("")
+   print("")
+
+
+   while(TQuant>0):
+       if(j==sz):
+           j=0
+
+       elif(qTemp[j]==0):
+           j=j+1
+
+       elif((Rtemp[j]>=1) and (qTemp[j]>=1)):
+
+           ##For Strips
+           if(S2temp[j]==1):
+               print("Strip")
+
+           ## For Sequencing
+           print(Stemp[j])
+           TQuant=TQuant-1
+           Rtemp[j]=Rtemp[j]-1
+           qTemp[j]=qTemp[j]-1
+
+           ##For Skips
+           if(S1temp[j]==1):
+               print("Skip")
+
+       elif(Rtemp[j]==0):
+           Rtemp[j]=Ratio[j]
+           j=j+1
+
+   print("")
+   print("")

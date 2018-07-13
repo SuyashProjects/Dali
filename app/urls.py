@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^ajax/edit/$', views.edit, name='edit'),
     url(r'^ajax/delete/$', views.delete, name='delete'),
     url(r'^ajax/validate/$', views.validate, name='validate'),
+    url(r'^sequence/ajax/start/$', views.start, name='start'),
 ]

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Config,Constraint,Shift,Station
+from .models import Constraint,Config,Seq,Station,Shift
 
 class Form1(forms.ModelForm):
     model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))

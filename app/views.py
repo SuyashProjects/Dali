@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response,redirect,render,get_object_or_40
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.contrib import messages
-from .models import Config,Constraint,Shift,Station
+from .models import Constraint,Config,Seq,Station,Shift
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import Form1,Edit,Delete,Form2,Form3,StnForm
@@ -22,8 +22,7 @@ def form1(request):
    variant=Obj['variant']
    color=Obj['color']
    if (Config.objects.filter(model=model,variant=variant,color=color).exists()):
-    data['Output'] = 'This configuration already exists.'
-    return JsonResponse(data)
+    data = 'This configuration already exists.'
    else:
     form=form.save()
     form.save()
@@ -31,7 +30,7 @@ def form1(request):
    print('Invalid Form')
  form = Form1()
  view = Config.objects.all().values()
- return render_to_response('app/form1.html',{'form':form,'view':view},RequestContext(request))
+ return render_to_response('app/form1.html',{'form':form,'view':view,'data':data},RequestContext(request))
 
 @csrf_exempt
 def edit(request):
@@ -115,10 +114,11 @@ def sequence(request):
     SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
     tl = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
     tq = Config.objects.exclude(quantity__isnull=True).values_list('quantity',flat=True)
+    tr = Config.objects.exclude(quantity__isnull=True).values_list('ratio',flat=True)
+    tsku = Config.objects.exclude(quantity__isnull=True).values_list('SKU',flat=True)
     for i in range(0,SKU_Count):
      if Config.objects.filter(SKU=i+1,quantity=None,ratio=0).exists():
          SKU_Count=SKU_Count-1
-    print(SKU_Count)
     Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
     Total_Shift_Time=list(Shift.objects.aggregate(Sum('time')).values())[0]
     Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
@@ -175,6 +175,12 @@ def sequence(request):
 
     return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3}, RequestContext(request))
 
+def start(request):
+    sku = request.GET.get('sku', None)
+    query = Config.objects.filter(SKU=sku).update(status='Running')
+    context = {'data': query}
+    data['html_form'] = render_to_string('app/edit_popup.html',context,request=request)
+
 @csrf_exempt
 def Line(request):
  if request.method == 'POST':
@@ -184,6 +190,7 @@ def Line(request):
     form.save()
  form = StnForm()
  return render_to_response('app/Line.html',{'form':form}, RequestContext(request))
+ return JsonResponse(data)
 
 def populate(request):
     sku = request.GET.get('sku', None)
