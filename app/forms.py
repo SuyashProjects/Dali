@@ -33,7 +33,7 @@ class Delete(forms.ModelForm):
 class Form2(forms.ModelForm):
     SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'class':'form-control'}))
     quantity = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
-    ratio = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
+    ratio = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}),required=False)
     constraints = forms.ModelMultipleChoiceField(queryset=Constraint.objects.values_list('name', flat=True), widget=forms.CheckboxSelectMultiple(),required=False)
     class Meta:
         model = Config

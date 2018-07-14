@@ -8,18 +8,12 @@ from numpy import unique
 def main(Sequence3,tq,tl):
    tl=tl
    a=array(tl)
-   print("Array of Station TAKT Times:")
-   print(a)
    tq=tq
    q=array(tq)
-   print("Array of Quantities:")
-   print(q)
    tSeq=Sequence3
    Seq=array(tSeq)
    Line=zeros(10)
    sz=len(Seq)
-   print(Seq)
-   print(sz)
    Time=zeros(10)
    Total_time=0
    j=9

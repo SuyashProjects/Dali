@@ -10,11 +10,10 @@ class Constraint(models.Model):
 
 class Config(models.Model):
     Status = (
-        ('Queued', 'Queued'),
-        ('Running', 'Running'),
-        ('On Hold', 'On Hold'),
-        ('Completed', 'Completed'),
-    )
+     ('Queued', 'Queued'),
+     ('Running', 'Running'),
+     ('On Hold', 'On Hold'),
+     ('Completed', 'Completed'),)
     SKU = models.AutoField(primary_key=True)
     model = models.CharField(max_length=6)
     variant = models.CharField(max_length=1)
@@ -32,12 +31,18 @@ class Config(models.Model):
         return str(self.SKU)
 
 class Seq(models.Model):
+    Status = (
+     ('Queued', 'Queued'),
+     ('Running', 'Running'),
+     ('On Hold', 'On Hold'),
+     ('Completed', 'Completed'),)
     Sq_No = models.PositiveSmallIntegerField(default=0)
-    SKU = models.ForeignKey(Config, on_delete=models.CASCADE)
+    SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
+    status = models.CharField(max_length=10, default='Queued', choices=Status)
     def submit(self):
         self.save()
     def __str__(self):
-        return str(self.SKU)
+        return str(self.Sq_No)
 
 class Station(models.Model):
     SKU = models.ForeignKey(Config, on_delete=models.CASCADE)
