@@ -124,9 +124,19 @@ def sequence(request):
  Total_Shift_Time=list(Shift.objects.aggregate(Sum('time')).values())[0]
  Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
  if(Total_Order<Capacity):
-  Seq_Num=[],Seq_SKU=[]
+  Seq_Num=[]
+  Seq_SKU=[]
   Sequence1={}
-  Sequence2=[],Sequence3=[],sku_list=[],ratio_list=[],temp=[],list1=[],list2=[],full=[],cancer1=[],cancer2=[]
+  Sequence2=[]
+  Sequence3=[]
+  sku_list=[]
+  ratio_list=[]
+  temp=[]
+  list1=[]
+  list2=[]
+  full=[]
+  cancer1=[]
+  cancer2=[]
   for x in range(0,Total_Order):
    Seq.objects.create(Sq_No=x+1,status='Running')
   #Color Blocking
