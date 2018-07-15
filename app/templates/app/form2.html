@@ -42,16 +42,6 @@ Production Plan
    {{ form.ratio.errors }}
    {{ form.ratio }}
    </div></div>
-   <div class="col-xs-1">
-   <div class="checkbox">
-      <label><input type="checkbox" value=""> Add Skips</label>
-    </div>
-   </div>
-   <div class="col-xs-1">
-   <div class="checkbox">
-      <label><input type="checkbox" value=""> Add Strips</label>
-    </div>
-   </div>
    <div class="col-xs-2"  style=" margin-left:20px;padding-top:18px; text-align: center;">
    <button type="submit" class="btn-sub" name="config">Submit</button>
    </div>
@@ -68,44 +58,40 @@ Production Plan
 <!--Start of area 2-->
 <div class="area2">
 <div class="panel">
-
+<form method="POST">{% csrf_token %}
   <div class="form-group row">
     <div class="col-xs-2" style="margin-left:15px;margin-top:15px;margin-right:10px;font-size:16px; font-weight:800;">
     Shift Duration:
+    Default: 7
     (In Hours)
     </div>
     <div class="col-xs-2">
     <label>First Shift</label>
-    {{ form.non_field_errors }}
+    {{ forms.non_field_errors }}
     <div class="fieldWrapper">
-    {{ form.SKU.errors }}
-    {{ form.SKU }}
+    {{ forms.A.errors }}
+    {{ forms.A }}
   </div></div>
   <div class="col-xs-2">
   <label>Second Shift</label>
-  {{ form.non_field_errors }}
+  {{ forms.non_field_errors }}
   <div class="fieldWrapper">
-  {{ form.SKU.errors }}
-  {{ form.SKU }}
+  {{ forms.B.errors }}
+  {{ forms.B }}
   </div></div>
   <div class="col-xs-2">
   <label>Third Shift</label>
-  {{ form.non_field_errors }}
+  {{ forms.non_field_errors }}
   <div class="fieldWrapper">
-  {{ form.SKU.errors }}
-  {{ form.SKU }}
+  {{ forms.C.errors }}
+  {{ forms.C }}
 </div></div>
-<div class="col-xs-1">
-<div class="checkbox">
-   <label><input type="checkbox" value=""> Color Blocking</label>
- </div>
-</div>
 <div class="col-xs-2"  style=" margin-left:20px;padding-top:18px; text-align: center;">
 <button type="submit" class="btn-sub" name="shift">Submit</button>
 </div>
 
   </div>
-
+</form>
 </div>
 </div>
 <!--End of area 2-->

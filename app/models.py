@@ -3,6 +3,7 @@ from django.utils import timezone
 
 class Constraint(models.Model):
     name = models.CharField(max_length=100)
+    Color_Blocked = models.BooleanField()
     def submit(self):
         self.save()
     def __str__(self):
@@ -63,7 +64,9 @@ class Station(models.Model):
 
 class Shift(models.Model):
     name = models.CharField(max_length=5)
-    time = models.PositiveIntegerField(default=7)
+    A = models.PositiveIntegerField(default=7)
+    B = models.PositiveIntegerField(default=7)
+    C = models.PositiveIntegerField(default=7)
     def submit(self):
         self.save()
     def __str__(self):

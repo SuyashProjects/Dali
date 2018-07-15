@@ -1,16 +1,11 @@
-from numpy import sum
-from numpy import array
-from numpy import amax
-from numpy import zeros
-from numpy import unique
+from numpy import sum,array,amax,zeros,unique
 
-
-def main(l3,tq,tl):
+def main(tSeq,tq,tl):
    tl=tl
    a=array(tl)
    tq=tq
    q=array(tq)
-   tSeq=l3
+   tSeq=tSeq
    Seq=array(tSeq)
    Line=zeros(10)
    sz=len(Seq)

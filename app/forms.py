@@ -39,13 +39,19 @@ class Form2(forms.ModelForm):
         model = Config
         fields = ('SKU','quantity','ratio','constraints')
 
-class Form3(forms.ModelForm):
-    time1 = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
-    time2 = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
-    time3 = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
+class ConstraintForm(forms.ModelForm):
+    Color_Blocked = forms.IntegerField(widget=forms.CheckboxInput(attrs={'class':'form-control'}))
+    class Meta:
+        model = Constraint
+        fields = ('Color_Blocked',)
+
+class ShiftForm(forms.ModelForm):
+    A = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
+    B = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
+    C = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
     class Meta:
         model = Shift
-        fields = ('time',)
+        fields = ('A','B','C',)
 
 class StnForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
