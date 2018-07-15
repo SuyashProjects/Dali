@@ -26,18 +26,16 @@
 </thead>
 <tbody>
 <tr>
-{% for key,value in Sequence3 %}
-<td>OR_{{ key }}</td>
-{% for value in value %}
-<td id="1">{{ value.SKU }}</td>
+{% for key in Sequence3 %}
+{% for value in key.0 %}<td id="1">OR_{{ value.Sq_No }}</td>{% endfor %}
+{% for value in key.1 %}
+<td>{{ value.SKU }}</td>
 <td>{{ value.model }}</td>
 <td>{{ value.variant }}</td>
 <td>{{ value.color }}</td>
 <td>{{ value.tank }}</td>
-<td>{{ value.status }}</td>
-{% endfor %}
-</tr>
-{% endfor %}
+{% for value in key.0 %}<td>{{ value.status }}</td>{% endfor %}
+{% endfor %}</tr>{% endfor %}
 </tbody></table>
 </div></div></div>
 </div>
@@ -48,46 +46,6 @@
 <button type="" class="btn-sub" style="margin-left:20px;">Resequence</button>
 </div>
 </div>
-
-<!--
-
-<div class="container" style="margin-top: 10px;"><div class="heading2" style=" background-color:black;">
-NEW SEQUENCE
-</div></div>
-
-<div class="container">
-<div class="card" style="height:240px; margin-left:0%; margin-right:0%; background-color:#696969; color:white; margin-top:10px; border:solid white 2px;">
-<div class="card-body"style="height:240px;">
- <div class="table-wrapper-2"style="height:240px;">
-<table class="table table-responsive-md table-bordered">
-<thead class="mdb-color lighten-4" style="background-color:#101669 !important; color:white !important;">
-<tr>
-<th class="th-lg">Order ID</th>
-<th class="th-lg">SKU</th>
-<th class="th-lg">Model</th>
-<th class="th-lg">Variant</th>
-<th class="th-lg">Color</th>
-<th class="th-lg">Tank</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-{% for key,value in Sequence2 %}
-<td>OR_{{ key }}</td>
-{% for value in value %}
-<td>{{ value.SKU }}</td>
-<td>{{ value.model }}</td>
-<td>{{ value.variant }}</td>
-<td>{{ value.color }}</td>
-<td>{{ value.tank }}</td>
-{% endfor %}
-</tr>
-{% endfor %}
-</tbody></table>
-</div></div></div>
-
-
--->
 
 <div class="bot bpad">
 <div class="container custom1">
@@ -125,10 +83,11 @@ $(function () {
   var Start = function () {
    var btn = $(this);
    var tr = $("#1").html();
+   tr = tr.slice(3);
    console.log(tr)
      $.ajax({
        url: '/sequence/ajax/start/',
-       data: {'sku': tr},
+       data: {'Sq_No': tr},
        success: function (data) {
          $("#ticker").html(data['Output']);
        }

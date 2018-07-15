@@ -1,14 +1,11 @@
 from django.shortcuts import render_to_response,redirect,render,get_object_or_404
 from django.template.loader import render_to_string
-from django.utils import timezone
-from django.contrib import messages
 from .models import Constraint,Config,Seq,Station,Shift
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import Form1,Edit,Delete,Form2,Form3,StnForm
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
-from django.core import serializers
 from gen import main
 
 @csrf_exempt
@@ -34,62 +31,62 @@ def form1(request):
 
 @csrf_exempt
 def edit(request):
-  data = dict()
-  if request.method == 'POST':
-   form = Edit(request.POST)
-   if form.is_valid():
-    data['form_is_valid'] = True
-    Obj = form.cleaned_data
-    SKU = Obj['SKU']
-    model = Obj['model']
-    variant = Obj['variant']
-    color = Obj['color']
-    tank = Obj['tank']
-    time = Obj['time']
-    description = Obj['description']
-    Config.objects.filter(SKU=SKU).update(model=model,variant=variant,color=color,tank=tank,time=time,description=description)
-    view = Config.objects.all().values()
-    data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
-   else:
-    data['form_is_valid'] = False
+ data = dict()
+ if request.method == 'POST':
+  form = Edit(request.POST)
+  if form.is_valid():
+   data['form_is_valid'] = True
+   Obj = form.cleaned_data
+   SKU = Obj['SKU']
+   model = Obj['model']
+   variant = Obj['variant']
+   color = Obj['color']
+   tank = Obj['tank']
+   time = Obj['time']
+   description = Obj['description']
+   Config.objects.filter(SKU=SKU).update(model=model,variant=variant,color=color,tank=tank,time=time,description=description)
+   view = Config.objects.all().values()
+   data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
   else:
-   form = Edit()
-   context = {'form': form}
-   data['html_form'] = render_to_string('app/edit_popup.html',context,request=request)
-  return JsonResponse(data)
+   data['form_is_valid'] = False
+ else:
+  form = Edit()
+  context = {'form': form}
+  data['html_form'] = render_to_string('app/edit_popup.html',context,request=request)
+ return JsonResponse(data)
 
 @csrf_exempt
 def delete(request):
-  data = dict()
-  if request.method == 'POST':
-   form = Delete(request.POST)
-   if form.is_valid():
-    data['form_is_valid'] = True
-    Obj = form.cleaned_data
-    SKU = Obj['SKU']
-    Config.objects.filter(SKU=SKU).delete()
-    view = Config.objects.all().values()
-    data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
-   else:
-    data['form_is_valid'] = False
+ data = dict()
+ if request.method == 'POST':
+  form = Delete(request.POST)
+  if form.is_valid():
+   data['form_is_valid'] = True
+   Obj = form.cleaned_data
+   SKU = Obj['SKU']
+   Config.objects.filter(SKU=SKU).delete()
+   view = Config.objects.all().values()
+   data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
   else:
-   form = Delete()
-   context = {'form': form}
-   data['html_form'] = render_to_string('app/delete_popup.html',context,request=request)
-  return JsonResponse(data)
+   data['form_is_valid'] = False
+ else:
+  form = Delete()
+  context = {'form': form}
+  data['html_form'] = render_to_string('app/delete_popup.html',context,request=request)
+ return JsonResponse(data)
 
 @csrf_exempt
 def form2(request):
  if request.method == 'POST':
-   form = Form2(request.POST)
-   if form.is_valid():
-     Obj = form.cleaned_data
-     SKU = Obj['SKU']
-     quantity = Obj['quantity']
-     ratio = Obj['ratio']
-     Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio)
-   else:
-     print('Error')
+  form = Form2(request.POST)
+  if form.is_valid():
+   Obj = form.cleaned_data
+   SKU = Obj['SKU']
+   quantity = Obj['quantity']
+   ratio = Obj['ratio']
+   Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio)
+  else:
+   print('Error')
  form = Form2()
  forms = Form3()
  view = Config.objects.all().values()
@@ -119,71 +116,84 @@ def sequence(request):
  for i in range(0,SKU_Count):
   if Config.objects.filter(SKU=i+1,quantity=0,ratio=0).exists():
    SKU_Count=SKU_Count-1
-   print(SKU_Count)
  Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
  Total_Shift_Time=list(Shift.objects.aggregate(Sum('time')).values())[0]
  Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
  if(Total_Order<Capacity):
-  Seq_Num=[]
-  Seq_SKU=[]
-  Sequence1={}
+  #List for Phase1
+  P1_Obj=[]
+  P1_Seq=[]
+  P1_Config=[]
+  Sequence1=[]
+  #List for Phase2
+  P2_Seq=[]
+  P2_Config=[]
+  SKU_val=[]
+  Ratio_val=[]
+  Sequenced=[]
+  P2_Obj=[]
   Sequence2=[]
+  #List for Color Blocking
+  l1=[]
+  l2=[]
+  l3=[]
+  l4=[]
+  l5=[]
+  l6=[]
   Sequence3=[]
-  sku_list=[]
-  ratio_list=[]
-  temp=[]
-  list1=[]
-  list2=[]
-  full=[]
-  cancer1=[]
-  cancer2=[]
-  for x in range(0,Total_Order):
-   Seq.objects.create(Sq_No=x+1,status='Running')
-  #Color Blocking
-  SKU5=Config.objects.exclude(quantity=0,ratio=0).values('SKU').order_by('color')
-  for key in SKU5:
-   list1.append(key['SKU'])
-  for i in list1:
-   list2.append(Config.objects.filter(SKU=i).values('ratio')[0]['ratio'])
-  SKU5 = list(zip(list1, list2))
-  for x in range (0,Total_Order//Ratio_Sum):
-   for key,value in SKU5:
-    for value in range(value):
-     Sequence3.append(key)
-  for value in Sequence3:
-     full.append(Config.objects.filter(SKU=value).values())
-  #Phase 1
-  for i in range(0,SKU_Count):
-   SKU=Config.objects.filter(SKU=i+1).values()
-   Quant=Config.objects.filter(SKU=i+1).values('quantity')[0]['quantity']
-   sku_list.append(Config.objects.filter(SKU=i+1).values('SKU')[0]['SKU'])
-   ratio_list.append(Config.objects.filter(SKU=i+1).values('ratio')[0]['ratio'])
-   for x in range(0,Total_Order):
-    Seq_Num.append(x+1)
-   for x in range(0,Quant):
-    Seq_SKU.append(SKU)
-  Sequence1 = list(zip(Seq_Num,Seq_SKU))
-  Seq_SKU = list(zip(sku_list, ratio_list))
-  #Order
+  #Phase1
   for i in range(0,SKU_Count):
    Quant=Config.objects.filter(SKU=i+1).values('quantity')[0]['quantity']
    for y in range(0,Quant):
-    a = Seq.objects.create(Sq_No=x+1,SKU=Config.objects.get(SKU=i+1),status='Running')
-  #Phase 2
-  for x in range (0,Total_Order//Ratio_Sum):
-   for key,value in Seq_SKU:
+    P1_Obj.append(Config.objects.get(SKU=i+1))
+  for x in range(0,Total_Order):
+   if not (Seq.objects.filter(Sq_No=x+1).exists()):
+    Seq.objects.get_or_create(Sq_No=x+1,SKU=P1_Obj[x])
+    P1_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
+    P1_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
+    Sequence1 = list(zip(P1_Seq, P2_Config))
+  #Phase2
+  for i in range(0,SKU_Count):
+   SKU_val.append(Config.objects.filter(SKU=i+1).values('SKU')[0]['SKU'])
+   Ratio_val.append(Config.objects.filter(SKU=i+1).values('ratio')[0]['ratio'])
+  sku_ratio = list(zip(SKU_val,Ratio_val))
+  for x in range(0,Total_Order//Ratio_Sum):
+   for key,value in sku_ratio:
     for value in range(value):
-     Sequence2.append(key)
-  for value in Sequence2:
-     temp.append(Config.objects.filter(SKU=value).values())
-  time = main(Sequence3,tq,tl)
-  Sequence2 = list(zip(Seq_Num,temp))
-  Sequence3 = list(zip(Seq_Num,full))
+     Sequenced.append(key)
+  for value in Sequenced:
+   P2_Obj.append(Config.objects.get(SKU=value))
+  for x in range(0,Total_Order):
+   Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
+   P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
+   P2_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
+   Sequence2 = list(zip(P2_Seq, P2_Config))
+  #Color Blocking
+  Color_Blocked=Config.objects.exclude(quantity=0,ratio=0).values('SKU').order_by('color')
+  for key in Color_Blocked:
+   l1.append(key['SKU'])
+  for i in l1:
+   l2.append(Config.objects.filter(SKU=i).values('ratio')[0]['ratio'])
+  Color_Blocked = list(zip(l1, l2))
+  for x in range (0,Total_Order//Ratio_Sum):
+   for key,value in Color_Blocked:
+    for value in range(value):
+     l3.append(key)
+  time = main(l3,tq,tl)
+  for value in l3:
+   l6.append(Config.objects.get(SKU=value))
+  for x in range(0,Total_Order):
+   Seq.objects.filter(Sq_No=x+1).update(SKU=l6[x])
+   l4.append(Seq.objects.filter(Sq_No=x+1).values())
+   l5.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
+   Sequence3 = list(zip(l4, l5))
  return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3}, RequestContext(request))
 
 def start(request):
- sku = request.GET.get('sku', None)
- Config.objects.filter(SKU=sku).update(status='Running')
+ Sq_No = request.GET.get('Sq_No', None)
+ Seq.objects.filter(Sq_No=Sq_No).update(status='Running')
+ view =  Seq.objects.filter(SKU_id=sku).values('status')
+ print(view)
  context = {'view': view}
  data['html_form'] = render_to_string('app/partial_list.html',context,request=request)
  return JsonResponse(data)
@@ -191,36 +201,36 @@ def start(request):
 @csrf_exempt
 def Line(request):
  if request.method == 'POST':
-   form = StnForm(request.POST)
-   if form.is_valid():
-    form = form.save()
-    form.save()
+  form = StnForm(request.POST)
+  if form.is_valid():
+   form = form.save()
+   form.save()
  form = StnForm()
  return render_to_response('app/Line.html',{'form':form}, RequestContext(request))
 
 def populate(request):
-    sku = request.GET.get('sku', None)
-    stn = Station.objects.filter(SKU=sku)
-    stn1 = stn.values('stn1')[0]['stn1']
-    stn2 = stn.values('stn2')[0]['stn2']
-    stn3 = stn.values('stn3')[0]['stn3']
-    stn4 = stn.values('stn4')[0]['stn4']
-    stn5 = stn.values('stn5')[0]['stn5']
-    stn6 = stn.values('stn6')[0]['stn6']
-    stn7 = stn.values('stn7')[0]['stn7']
-    stn8 = stn.values('stn8')[0]['stn8']
-    stn9 = stn.values('stn9')[0]['stn9']
-    stn10 = stn.values('stn10')[0]['stn10']
-    data = {
-        'stn1' : stn1,
-        'stn2' : stn2,
-        'stn3' : stn3,
-        'stn4' : stn4,
-        'stn5' : stn5,
-        'stn6' : stn6,
-        'stn7' : stn7,
-        'stn8' : stn8,
-        'stn9' : stn9,
-        'stn10' : stn10,
-        }
-    return JsonResponse(data)
+ sku = request.GET.get('sku', None)
+ stn = Station.objects.filter(SKU=sku)
+ stn1 = stn.values('stn1')[0]['stn1']
+ stn2 = stn.values('stn2')[0]['stn2']
+ stn3 = stn.values('stn3')[0]['stn3']
+ stn4 = stn.values('stn4')[0]['stn4']
+ stn5 = stn.values('stn5')[0]['stn5']
+ stn6 = stn.values('stn6')[0]['stn6']
+ stn7 = stn.values('stn7')[0]['stn7']
+ stn8 = stn.values('stn8')[0]['stn8']
+ stn9 = stn.values('stn9')[0]['stn9']
+ stn10 = stn.values('stn10')[0]['stn10']
+ data = {
+     'stn1' : stn1,
+     'stn2' : stn2,
+     'stn3' : stn3,
+     'stn4' : stn4,
+     'stn5' : stn5,
+     'stn6' : stn6,
+     'stn7' : stn7,
+     'stn8' : stn8,
+     'stn9' : stn9,
+     'stn10' : stn10,
+     }
+ return JsonResponse(data)

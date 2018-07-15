@@ -5,12 +5,12 @@ from numpy import zeros
 from numpy import unique
 
 
-def main(Sequence3,tq,tl):
+def main(l3,tq,tl):
    tl=tl
    a=array(tl)
    tq=tq
    q=array(tq)
-   tSeq=Sequence3
+   tSeq=l3
    Seq=array(tSeq)
    Line=zeros(10)
    sz=len(Seq)
