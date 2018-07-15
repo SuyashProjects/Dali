@@ -1,49 +1,48 @@
 from django import forms
 from .models import Constraint,Config,Seq,Station,Shift
 
-class Form1(forms.ModelForm):
-    model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    variant = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    color = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    tank = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    time = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}))
-    description = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}),required=False)
-    class Meta:
-        model = Config
-        fields = ('model','variant','color','tank','time','description')
+class SKUDef(forms.ModelForm):
+ model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+ variant = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+ color = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+ tank = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+ time = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
+ description = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}),required=False)
+ class Meta:
+  model = Config
+  fields = ('model','variant','color','tank','time','description')
 
 class Edit(forms.ModelForm):
-    SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'class':'form-control'}))
-    model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    variant = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    color = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    tank = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
-    time = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
-    description = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}),required=False)
-    class Meta:
-        model = Config
-        fields = ('SKU','model','variant','color','tank','time','description')
+ SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'class':'form-control'}))
+ model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+ variant = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+ color = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+ tank = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+ time = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
+ description = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}),required=False)
+ class Meta:
+  model = Config
+  fields = ('SKU','model','variant','color','tank','time','description')
 
 class Delete(forms.ModelForm):
-    SKU = forms.IntegerField(widget=forms.TextInput(attrs={'min': 1,'class':'form-control'}))
-    class Meta:
-        model = Config
-        fields = ('SKU',)
+ SKU = forms.IntegerField(widget=forms.TextInput(attrs={'min': 1,'class':'form-control'}))
+ class Meta:
+  model = Config
+  fields = ('SKU',)
 
-class Form2(forms.ModelForm):
-    SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'class':'form-control'}))
-    quantity = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
-    ratio = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}),required=False)
-    constraints = forms.ModelMultipleChoiceField(queryset=Constraint.objects.values_list('name', flat=True), widget=forms.CheckboxSelectMultiple(),required=False)
-    class Meta:
-        model = Config
-        fields = ('SKU','quantity','ratio','constraints')
+class Form1(forms.ModelForm):
+ SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'class':'form-control'}))
+ quantity = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
+ ratio = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}),required=False)
+ class Meta:
+  model = Config
+  fields = ('SKU','quantity','ratio','constraints')
 
 class ConstraintForm(forms.ModelForm):
-    Color_Blocked = forms.IntegerField(widget=forms.CheckboxInput(attrs={'class':'form-control'}))
-    class Meta:
-        model = Constraint
-        fields = ('Color_Blocked',)
+ Color_Blocked = forms.IntegerField(widget=forms.CheckboxInput(attrs={'class':'form-control'}))
+ class Meta:
+  model = Constraint
+  fields = ('Color_Blocked',)
 
 class ShiftForm(forms.ModelForm):
     A = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))

@@ -140,7 +140,7 @@ CURRENT ORDERS
 <div style="text-align:center; margin-top:10px;">
 <button type="button" class="btn-sub delete" style="margin-left:20px;">Delete</button>
 <button id="val" type="button" onclick="Disable()" class="btn-sub validate" style="margin-left:20px;">Validate</button>
-<a href="{% url 'sequence' %}"><button type="button" class="btn-sub" style="margin-left:20px;">Gen Seq</button></a>
+<a href="{% url 'Sequence' %}"><button type="button" class="btn-sub" style="margin-left:20px;">Gen Seq</button></a>
 </div>
 </div>
 
@@ -153,9 +153,9 @@ CURRENT ORDERS
 
 
 <div class="btn-group-1">
-  <a href="{% url 'form1' %}"><button class="cbtns1">CONFIGURATION</button></a>
-  <a href="{% url 'form2' %}"><button class="cbtn1"  style="background-color:#424100;">PRODUCTION PLAN</button></a>
-  <a href="{% url 'sequence' %}"><button class="cbtn1">ORDER MONITORING</button></a>
+  <a href="{% url 'Configuration' %}"><button class="cbtns1">CONFIGURATION</button></a>
+  <a href="{% url 'Production' %}"><button class="cbtn1"  style="background-color:#424100;">PRODUCTION PLAN</button></a>
+  <a href="{% url 'Sequence' %}"><button class="cbtn1">ORDER MONITORING</button></a>
   <a href="{% url 'Line' %}"><button class="cbtn1">LINE MONITORING</button></a>
   <a href="#"><button class="cbtn1">MACH MONITORING</button></a>
   <a href="#"><button class="cbtn1">HOLD LOG</button></a>

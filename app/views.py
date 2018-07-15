@@ -3,62 +3,62 @@ from django.template.loader import render_to_string
 from .models import Constraint,Config,Seq,Station,Shift
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from .forms import Form1,Edit,Delete,Form2,ConstraintForm,ShiftForm,StnForm
+from .forms import SKUDef,Edit,Delete,Form1,ConstraintForm,ShiftForm,StnForm
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
 from gen import main
 from numpy import sum
 
 @csrf_exempt
-def form1(request):
- data = dict()
+def Configuration(request):
+ data=dict()
  if request.method == 'POST':
-  form=Form1(request.POST)
+  form=SKUDef(request.POST)
   if form.is_valid():
    Obj=form.cleaned_data
    model=Obj['model']
    variant=Obj['variant']
    color=Obj['color']
    if (Config.objects.filter(model=model,variant=variant,color=color).exists()):
-    data = 'This configuration already exists.'
+    data='This configuration already exists.'
    else:
     form=form.save()
     form.save()
   else:
-   data = 'Invalid Form'
- form = Form1()
- view = Config.objects.all().values()
- return render_to_response('app/form1.html',{'form':form,'view':view,'data':data},RequestContext(request))
+   data='Invalid Form'
+ form=SKUDef()
+ view=Config.objects.all().values()
+ return render_to_response('app/configuration.html',{'form':form,'view':view,'data':data},RequestContext(request))
 
 @csrf_exempt
-def edit(request):
- data = dict()
+def Edit(request):
+ data=dict()
  if request.method == 'POST':
-  form = Edit(request.POST)
+  form=Edit(request.POST)
   if form.is_valid():
    data['form_is_valid'] = True
-   Obj = form.cleaned_data
-   SKU = Obj['SKU']
-   model = Obj['model']
-   variant = Obj['variant']
-   color = Obj['color']
-   tank = Obj['tank']
-   time = Obj['time']
-   description = Obj['description']
+   Obj=form.cleaned_data
+   SKU=Obj['SKU']
+   model=Obj['model']
+   variant=Obj['variant']
+   color=Obj['color']
+   tank=Obj['tank']
+   time=Obj['time']
+   description=Obj['description']
    if not (Config.objects.filter(model=model,variant=variant,color=color).exists()):
     Config.objects.filter(SKU=SKU).update(model=model,variant=variant,color=color,tank=tank,time=time,description=description)
-   view = Config.objects.all().values()
-   data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
+   view=Config.objects.all().values()
+   data['sku_list']=render_to_string('app/partial_list.html', {'view': view})
   else:
    data['form_is_valid'] = False
  else:
-  form = Edit()
-  context = {'form': form}
-  data['html_form'] = render_to_string('app/edit_popup.html',context,request=request)
+  form=Edit()
+  context={'form': form}
+  data['html_form']=render_to_string('app/edit_popup.html',context,request=request)
  return JsonResponse(data)
 
 @csrf_exempt
-def delete(request):
+def Delete(request):
  data = dict()
  if request.method == 'POST':
   form = Delete(request.POST)
@@ -78,9 +78,9 @@ def delete(request):
  return JsonResponse(data)
 
 @csrf_exempt
-def form2(request):
+def Production(request):
  if 'config' in request.POST:
-  form = Form2(request.POST)
+  form = Form1(request.POST)
   if form.is_valid():
    Obj = form.cleaned_data
    SKU = Obj['SKU']
@@ -105,13 +105,13 @@ def form2(request):
    Constraint.objects.filter(name='Constraint').update_or_create(Color_Blocked=Color_Blocked)
   else:
    print('Constraint Error')
- form = Form2()
+ form = Form1()
  forms = ShiftForm()
  formed = ConstraintForm()
  view = Config.objects.all().values()
- return render_to_response( 'app/form2.html',{'form':form,'view':view,'forms':forms,'formed':formed}, RequestContext(request))
+ return render_to_response( 'app/production.html',{'form':form,'view':view,'forms':forms,'formed':formed}, RequestContext(request))
 
-def validate(request):
+def Validate(request):
  data = dict()
  Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
@@ -124,7 +124,7 @@ def validate(request):
   data['Output'] = 'Orders are within capacity, Sequence can now be generated!'
  return JsonResponse(data)
 
-def sequence(request):
+def Sequence(request):
  Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
  Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
  Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
@@ -210,7 +210,7 @@ def sequence(request):
    Sequence3 = list(zip(P3_Seq,P3_Config))
  return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3}, RequestContext(request))
 
-def start(request):
+def Start(request):
  Sq_No = request.GET.get('Sq_No', None)
  Seq.objects.filter(Sq_No=Sq_No).update(status='Running')
  view =  Seq.objects.filter(SKU_id=sku).values('status')
@@ -226,9 +226,9 @@ def Line(request):
    form = form.save()
    form.save()
  form = StnForm()
- return render_to_response('app/Line.html',{'form':form}, RequestContext(request))
+ return render_to_response('app/line.html',{'form':form}, RequestContext(request))
 
-def populate(request):
+def Populate(request):
  sku = request.GET.get('sku', None)
  stn = Station.objects.filter(SKU=sku)
  stn1 = stn.values('stn1')[0]['stn1']

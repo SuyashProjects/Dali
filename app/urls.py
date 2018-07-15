@@ -1,14 +1,14 @@
-from django.conf.urls import url, include
+from django.conf.urls import url,include
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.form1, name='form1'),
-    url(r'^form2/$', views.form2, name='form2'),
-    url(r'^sequence/$', views.sequence, name='sequence'),
-    url(r'^line/$', views.Line, name='Line'),
-    url(r'^ajax/populate/$', views.populate, name='populate'),
-    url(r'^ajax/edit/$', views.edit, name='edit'),
-    url(r'^ajax/delete/$', views.delete, name='delete'),
-    url(r'^ajax/validate/$', views.validate, name='validate'),
-    url(r'^sequence/ajax/start/$', views.start, name='start'),
+ url(r'^$', views.Configuration, name='Configuration'),
+ url(r'^production/$', views.Production, name='Production'),
+ url(r'^sequence/$', views.Sequence, name='Sequence'),
+ url(r'^line/$', views.Line, name='Line'),
+ url(r'^ajax/populate/$', views.Populate, name='Populate'),
+ url(r'^ajax/edit/$', views.Edit, name='Edit'),
+ url(r'^ajax/delete/$', views.Delete, name='Delete'),
+ url(r'^ajax/validate/$', views.Validate, name='Validate'),
+ url(r'^sequence/ajax/start/$', views.Start, name='Start'),
 ]
