@@ -102,7 +102,7 @@ def form2(request):
   if formed.is_valid():
    Obj = formed.cleaned_data
    Color_Blocked = Obj['Color_Blocked']
-   Shift.objects.filter(name='Constraint').update_or_create(Color_Blocked=Color_Blocked)
+   Constraint.objects.filter(name='Constraint').update_or_create(Color_Blocked=Color_Blocked)
   else:
    print('Constraint Error')
  form = Form2()
