@@ -1,64 +1,160 @@
 {% extends 'app/base.html' %}
 {% block content %}
+
 <!--Start of body content -->
+
 <!--Start of Header-->
-<div class="bar"><div class="heading">ORDER MONITORING</div></div>
+<div class="bar"><div class="heading">
+PRODUCTION PLAN
+</div></div>
 <!--End of Header -->
 
+<!--Start of Container-->
+<div class="container" style="margin-top: 30px;">
 
-<div class="container" style="margin-top: 35px;"><div class="heading2">CURRENT SEQUENCE</div></div>
-<div><button type="button" class="btn-sub start" style="margin-top:1%; font-size: 18px; padding-left: 1%; padding-right: 1%; margin-left:47.5%;">START</button></div>
+<!--Start of area 1 -->
+<div class="area1">
+<div class="panel">
+
+  <form method="POST">{% csrf_token %}
+   <div class="form-group row">
+     <div class="col-xs-1" style="margin-left:20px;margin-top:15px; margin-right:25px; font-size:16px; font-weight:800;">
+     Place/Edit Orders:
+     </div>
+     <div class="col-xs-2">
+     <label>Enter SKU</label>
+     {{ form.non_field_errors }}
+     <div class="fieldWrapper">
+     {{ form.SKU.errors }}
+     {{ form.SKU }}
+   </div></div>
+   <div class="col-xs-2">
+   <label>Quantity</label>
+   {{ form.non_field_errors }}
+   <div class="fieldWrapper">
+   {{ form.quantity.errors }}
+   {{ form.quantity }}
+   </div></div>
+   <div class="col-xs-2">
+   <label>Ratio</label>
+   {{ form.non_field_errors }}
+   <div class="fieldWrapper">
+   {{ form.ratio.errors }}
+   {{ form.ratio }}
+   </div></div>
+   <div class="col-xs-2"  style=" margin-left:20px;padding-top:18px; text-align: center;">
+   <button type="submit" class="btn-sub" name="config">Submit</button>
+   </div>
+
+
+   </div>
+  </form>
+
+
+</div>
+</div>
+<!--End of area 1 -->
+
+<!--Start of area 2-->
+<div class="area2">
+<div class="panel">
+<form method="POST">{% csrf_token %}
+  <div class="form-group row">
+    <div class="col-xs-3" style="margin-left:15px;margin-top:15px;margin-right:10px;font-size:16px; font-weight:800;">
+    Shift Duration:
+    (hrs) Default: 7
+    </div>
+    <div class="col-xs-2">
+    <label>First Shift</label>
+    {{ forms.non_field_errors }}
+    <div class="fieldWrapper">
+    {{ forms.A.errors }}
+    {{ forms.A }}
+  </div></div>
+  <div class="col-xs-2">
+  <label>Second Shift</label>
+  {{ forms.non_field_errors }}
+  <div class="fieldWrapper">
+  {{ forms.B.errors }}
+  {{ forms.B }}
+  </div></div>
+  <div class="col-xs-2">
+  <label>Third Shift</label>
+  {{ forms.non_field_errors }}
+  <div class="fieldWrapper">
+  {{ forms.C.errors }}
+  {{ forms.C }}
+</div></div>
+<div class="col-xs-2"  style=" margin-left:20px;padding-top:18px; text-align: center;">
+<button type="submit" class="btn-sub" name="shift">Submit</button>
+</div>
+
+  </div>
+</form>
+</div>
+</div>
+<!--End of area 2-->
+
+</div>
+<!--End of -->
+
+
+<div class="container" style="margin-top: 0px;"><div class="heading2">
+CURRENT ORDERS
+</div></div>
+
 <div class="container">
-<div class="card" style="height:450px; margin-left:0%; margin-right:0%; background-color:#696969; color:white; margin-top:15px; border:solid white 2px;">
-<div class="card-body" style="height:450px;">
- <div class="table-wrapper-4">
+<div class="card" style="margin-left:1%; margin-right:1%; background-color:#696969;height:380px; color:white; margin-top:15px; border:solid white 2px;">
+<div class="card-body" style="height:380px;">
+ <div class="table-wrapper-2" style="height:380px;">
 <table class="table table-responsive-md table-bordered">
 <thead class="mdb-color lighten-4" style="background-color:#101669 !important; color:white !important;">
 <tr>
-<th class="th-lg">Order ID</th>
-<th class="th-lg">SKU</th>
+<th>S.No</th>
 <th class="th-lg">Model</th>
 <th class="th-lg">Variant</th>
 <th class="th-lg">Color</th>
-<th class="th-lg">Tank</th>
-<th class="th-lg">Status</th>
+<th class="th-lg">Fuel Tank Type</th>
+<th class="th-lg">TAKT Time</th>
+<th class="th-lg">Quantity</th>
+<th class="th-lg">Ratio</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-{% for key in Sequence3 %}
-{% for value in key.0 %}<td id="1">OR_{{ value.Sq_No }}</td>{% endfor %}
-{% for value in key.1 %}
-<td>{{ value.SKU }}</td>
-<td>{{ value.model }}</td>
-<td>{{ value.variant }}</td>
-<td>{{ value.color }}</td>
-<td>{{ value.tank }}</td>
-{% for value in key.0 %}<td>{{ value.status }}</td>{% endfor %}
-{% endfor %}</tr>{% endfor %}
+{% for key in view %}
+<td>{{key.SKU}}</td>
+<td>{{key.model}}</td>
+<td>{{key.variant}}</td>
+<td>{{key.color}}</td>
+<td>{{key.tank}}</td>
+<td>{{key.time}}</td>
+<td>{{key.quantity}}</td>
+<td>{{key.ratio}}</td>
+</tr>
+{% endfor %}
 </tbody></table>
 </div></div></div>
-</div>
 
-<div class="container">
 <div style="text-align:center; margin-top:10px;">
-<button type="" class="btn-sub" style="">Optimize</button>
-<button type="" class="btn-sub" style="margin-left:20px;">Resequence</button>
+<button type="button" class="btn-sub delete" style="margin-left:20px; width:85px;">Delete</button>
+<button id="val" type="button" onclick="Disable()" class="btn-sub validate" style="margin-left:20px; width:85px;">Validate</button>
+<a href="{% url 'Sequence' %}"><button type="button" class="btn-sub" style="margin-left:20px; width:85px;">Gen Seq</button></a>
 </div>
 </div>
 
 <div class="bot bpad">
 <div class="container custom1">
 <div class="blpanel">
-<marquee behavior="scroll" direction="left">{{data|default:"No Alerts to show"}}</marquee>
+<marquee id="ticker" behavior="scroll" direction="left">{{data|default:"No Alerts to show"}}</marquee>
 </div>
 </div>
 
 
 <div class="btn-group-1">
   <a href="{% url 'Configuration' %}"><button class="cbtns1">CONFIGURATION</button></a>
-  <a href="{% url 'Production' %}"><button class="cbtn1">PRODUCTION PLAN</button></a>
-  <a href="{% url 'Sequence' %}"><button class="cbtn1"  style="background-color:#424100;">ORDER MONITORING</button></a>
+  <a href="{% url 'Production' %}"><button class="cbtn1"  style="background-color:#424100;">PRODUCTION PLAN</button></a>
+  <a href="{% url 'Sequence' %}"><button class="cbtn1">ORDER MONITORING</button></a>
   <a href="{% url 'Line' %}"><button class="cbtn1">LINE MONITORING</button></a>
   <a href="#"><button class="cbtn1">MACH MONITORING</button></a>
   <a href="#"><button class="cbtn1">HOLD LOG</button></a>
@@ -76,24 +172,65 @@
   <a href="#"><button class="cbtne2"><a href="#">WORKFORCE MGMT</button></a>
 </div>
 </div>
+<div class="modal fade" id="modaldelete">
+    <div class="modal-dialog">
+      <div class="modal-content" style="background-color:#50515e; color:white !important; border:2px white solid;">
+      </div></div></div>
 {% endblock %}
 {% block javascript %}
 <script>
+function Disable() {
+document.getElementById('val').disabled = true;
+};
 $(function () {
-  var Start = function () {
+  var Validate = function () {
    var btn = $(this);
-   var tr = $("#1").html();
-   tr = tr.slice(3);
-   console.log(tr)
      $.ajax({
-       url: '/sequence/ajax/start/',
-       data: {'Sq_No': tr},
+       url: '/ajax/validate/',
+       type: 'get',
+       dataType: 'json',
        success: function (data) {
          $("#ticker").html(data['Output']);
        }
      });
    };
-  $(".start").click(Start);
+    var DelForm = function () {
+     var btn = $(this);
+       $.ajax({
+         url: '/ajax/delete/',
+         type: 'get',
+         dataType: 'json',
+         beforeSend: function () {
+         $("#modaldelete .modal-content").html("");
+         $("#modaldelete").modal("show");
+         },
+         success: function (data) {
+           $("#modaldelete .modal-content").html(data.html_form);
+         }
+       });
+     };
+     var saveForm2 = function () {
+        var form = $(this);
+        $.ajax({
+          url: form.attr("action"),
+          data: form.serialize(),
+          type: form.attr("method"),
+          dataType: 'json',
+          success: function (data) {
+          if (data.form_is_valid) {
+            $("#tbody").html(data.sku_list);
+              $("#modaldelete").modal("hide");
+            }
+          else {
+           $("#modaldelete .modal-content").html(data.html_form);
+            }
+          }
+        });
+        return false;
+          };
+  $(".validate").click(Validate);
+  $(".delete").click(DelForm);
+  $("#modaldelete").on("submit", ".delete_popup", saveForm2);
   });
 </script>
 {% endblock %}
