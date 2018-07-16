@@ -57,20 +57,29 @@ color: black;
 
 /*bar and heading control the top header */
 .bar1{
-width:84%;
+width:70%;
 height:auto;
 padding-top: 10px;
 padding-left: 15%;
 float: left;
 }
+.bar{
+  width:72%;
+  height:auto;
+  padding-top: 10px;
+  padding-left: 40%;
+  float: left;
+  margin-top:1%;
+}
 .bar2{
-width:16%;
+width:28%;
 height:auto;
 padding-top: 10px;
 float: right;
+margin-top:1%;
 }
 .heading{
-width:30%;
+width:100%;
 height:auto;
 margin:0 auto 0;
 font-size: 30px;
@@ -329,7 +338,7 @@ text-align: left;
 /*Table Tags */
 .table-wrapper-2{
 display: block;
-max-height: 390px;
+max-height: 375px;
 overflow-y: auto;
 -ms-overflow-style: -ms-autohiding-scrollbar;
 }
@@ -341,7 +350,7 @@ overflow-y: auto;
 }
 .table-wrapper-4{
 display: block;
-max-height: none;
+max-height: 445px;
 overflow-y: auto;
 -ms-overflow-style: -ms-autohiding-scrollbar;
 }
@@ -453,9 +462,7 @@ fieldset[disabled] .btn-sub.active {
 </style></head>
 <body>
 <div class="bar2">
-<div>Date</div>
 <div id="date" style="color:white">Date</div>
-<div>Time</div>
 <div id="time" style="color:white">Time</div>
 </div>
 {% block content %}{% endblock %}
@@ -467,11 +474,11 @@ $(document).ready(function(){
       var mm = current.getMonth() + 1;
       var dd = current.getDate();
       var yyyy = current.getFullYear();
-      var date = dd + '/' + mm + '/' + yyyy;
+      var date = 'Date: '+ dd + '/' + mm + '/' + yyyy;
       var hh = current.getHours();
       var m = current.getMinutes();
       var ss = current.getSeconds();
-      var time = hh + ':' + m + ':' + ss;
+      var time ='Time: ' + hh + ':' + m + ':' + ss;
       $("#date").html(date);
       $("#time").html(time);
     }
