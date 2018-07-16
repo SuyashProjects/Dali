@@ -12,7 +12,7 @@ class SKUDef(forms.ModelForm):
   model = Config
   fields = ('model','variant','color','tank','time','description')
 
-class Edit(forms.ModelForm):
+class EditForm(forms.ModelForm):
  SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'class':'form-control'}))
  model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
  variant = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -24,22 +24,24 @@ class Edit(forms.ModelForm):
   model = Config
   fields = ('SKU','model','variant','color','tank','time','description')
 
-class Delete(forms.ModelForm):
+class DeleteForm(forms.ModelForm):
  SKU = forms.IntegerField(widget=forms.TextInput(attrs={'min': 1,'class':'form-control'}))
  class Meta:
   model = Config
   fields = ('SKU',)
 
-class Form1(forms.ModelForm):
+class OrderForm(forms.ModelForm):
  SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'class':'form-control'}))
  quantity = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
  ratio = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}),required=False)
+ skips = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class':'form-control'}),required=False)
+ strips = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class':'form-control'}),required=False)
  class Meta:
   model = Config
-  fields = ('SKU','quantity','ratio','constraints')
+  fields = ('SKU','quantity','ratio','skips','strips')
 
 class ConstraintForm(forms.ModelForm):
- Color_Blocked = forms.IntegerField(widget=forms.CheckboxInput(attrs={'class':'form-control'}))
+ Color_Blocked = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class':'form-control'}),required=False)
  class Meta:
   model = Constraint
   fields = ('Color_Blocked',)

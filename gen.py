@@ -12,7 +12,6 @@ def main(tSeq,tq,tl):
    Time=zeros(10)
    Total_time=0
    j=9
-   print("Dynamic Line Instances along with TAKT Times:")
    for i in range(69):
        if(i>59):
            while(j!=0):
@@ -52,12 +51,11 @@ def main(tSeq,tq,tl):
            TKTME=amax(Time)
            print(TKTME)
            Total_time=Total_time+TKTME
-   print("")
    print("Total Time taken:")
    print(Total_time)
    return Total_time
 
-def sub(tq,tr):
+def sub(tq,tr,tsku,tskips,tstrips):
    tempQuants=tq
    Quants=array(tempQuants)
 
@@ -67,20 +65,19 @@ def sub(tq,tr):
    tempSKU=tsku
    SKU=array(tempSKU)
 
-   tSkips=([0,0,0])
+   tSkips=tskips
    Skips=array(tSkips)
+   Skips=Skips.astype(int)
 
-   tStrips=([0,0,0])
+   tStrips=tstrips
    Strips=array(tStrips)
+   Strips=Strips.astype(int)
 
    TQuant=sum(tempQuants)
-   #print(TQuant)
 
    Seq=zeros(3*TQuant)
 
    sz=len(tempSKU)
-
-   #print(hm)
 
 
    j=0
@@ -95,12 +92,7 @@ def sub(tq,tr):
 
    S2temp=array(tStrips)
 
-
-
-   print("The Sequence:")
-   print("")
-   print("")
-
+   li=[]
 
    while(TQuant>0):
        if(j==sz):
@@ -113,21 +105,20 @@ def sub(tq,tr):
 
            ##For Strips
            if(S2temp[j]==1):
-               print("Strip")
+               li.append(0)
 
            ## For Sequencing
-           print(Stemp[j])
+           li.append(Stemp[j])
            TQuant=TQuant-1
            Rtemp[j]=Rtemp[j]-1
            qTemp[j]=qTemp[j]-1
 
            ##For Skips
            if(S1temp[j]==1):
-               print("Skip")
+               li.append(0)
 
        elif(Rtemp[j]==0):
            Rtemp[j]=Ratio[j]
            j=j+1
 
-   print("")
-   print("")
+   return li

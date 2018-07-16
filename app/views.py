@@ -3,10 +3,10 @@ from django.template.loader import render_to_string
 from .models import Constraint,Config,Seq,Station,Shift
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from .forms import SKUDef,Edit,Delete,Form1,ConstraintForm,ShiftForm,StnForm
+from .forms import SKUDef,EditForm,DeleteForm,OrderForm,ConstraintForm,ShiftForm,StnForm
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
-from gen import main
+from gen import main,sub
 from numpy import sum
 
 @csrf_exempt
@@ -52,7 +52,7 @@ def Edit(request):
   else:
    data['form_is_valid'] = False
  else:
-  form=Edit()
+  form=EditForm()
   context={'form': form}
   data['html_form']=render_to_string('app/edit_popup.html',context,request=request)
  return JsonResponse(data)
@@ -72,7 +72,7 @@ def Delete(request):
   else:
    data['form_is_valid'] = False
  else:
-  form = Delete()
+  form = DeleteForm()
   context = {'form': form}
   data['html_form'] = render_to_string('app/delete_popup.html',context,request=request)
  return JsonResponse(data)
@@ -80,13 +80,18 @@ def Delete(request):
 @csrf_exempt
 def Production(request):
  if 'config' in request.POST:
-  form = Form1(request.POST)
+  form = OrderForm(request.POST)
   if form.is_valid():
    Obj = form.cleaned_data
    SKU = Obj['SKU']
    quantity = Obj['quantity']
-   ratio = Obj['ratio']
-   Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio)
+   skips = Obj['skips']
+   strips = Obj['strips']
+   if (bool(Obj.get('ratio', False))):
+    ratio = Obj['ratio']
+   else:
+    ratio = Obj['quantity']
+   Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio,skips=skips,strips=strips)
   else:
    print('Config Error')
  elif 'shift' in request.POST:
@@ -105,7 +110,7 @@ def Production(request):
    Constraint.objects.filter(name='Constraint').update_or_create(Color_Blocked=Color_Blocked)
   else:
    print('Constraint Error')
- form = Form1()
+ form = OrderForm()
  forms = ShiftForm()
  formed = ConstraintForm()
  view = Config.objects.all().values()
@@ -134,26 +139,24 @@ def Sequence(request):
  tr = Config.objects.exclude(quantity=0).values_list('ratio',flat=True)
  tsku = Config.objects.exclude(quantity=0).values_list('SKU',flat=True)
  for i in range(0,SKU_Count):
-  if Config.objects.filter(SKU=i+1,quantity=0,ratio=0).exists():
+  if Config.objects.filter(SKU=i+1,quantity=0).exists():
    SKU_Count=SKU_Count-1
+ tskips = Config.objects.exclude(quantity=0).values_list('skips',flat=True)
+ tstrips = Config.objects.exclude(quantity=0).values_list('strips',flat=True)
+ Sequence = sub(tq,tr,tsku,tskips,tstrips)
  Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
  Total_Shift_Time=sum(Total_Shift_Time)
  Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
  if(Total_Order<Capacity):
-  #List for Phase1
-  P1_Obj=[]
-  P1_Seq=[]
-  P1_Config=[]
-  Sequence1=[]
   #List for Phase2
-  P2_Seq=[]
-  P2_Config=[]
   SKU_val=[]
   Ratio_val=[]
   Sequenced=[]
   P2_Obj=[]
-  Sequence2=[]
+  P2_Seq=[]
+  P2_Config=[]
+  Sequence1=[]
   #List for Color Blocking
   P3_Seq=[]
   P3_Config=[]
@@ -161,18 +164,7 @@ def Sequence(request):
   SKU_val_color=[]
   Ratio_val_color=[]
   tSeq=[]
-  Sequence3=[]
-  #Phase1
-  for i in range(0,SKU_Count):
-   Quant=Config.objects.filter(SKU=i+1).values('quantity')[0]['quantity']
-   for y in range(0,Quant):
-    P1_Obj.append(Config.objects.get(SKU=i+1))
-  for x in range(0,Total_Order):
-   if not (Seq.objects.filter(Sq_No=x+1).exists()):
-    Seq.objects.get_or_create(Sq_No=x+1,SKU=P1_Obj[x])
-    P1_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
-    P1_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
-    Sequence1 = list(zip(P1_Seq, P2_Config))
+  Sequence2=[]
   #Phase2
   for i in range(0,SKU_Count):
    SKU_val.append(Config.objects.filter(SKU=i+1).values('SKU')[0]['SKU'])
@@ -185,10 +177,11 @@ def Sequence(request):
   for value in Sequenced:
    P2_Obj.append(Config.objects.get(SKU=value))
   for x in range(0,Total_Order):
-   Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
-   P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
-   P2_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
-   Sequence2 = list(zip(P2_Seq, P2_Config))
+   if not (Seq.objects.filter(Sq_No=x+1).exists()):
+    Seq.objects.get_or_create(Sq_No=x+1,SKU=P2_Obj[x])
+    P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
+    P2_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
+    Sequence1 = list(zip(P2_Seq, P2_Config))
   #Color Blocking
   Color_Blocked=Config.objects.exclude(quantity=0,ratio=0).values('SKU').order_by('color')
   for key in Color_Blocked:
@@ -201,14 +194,15 @@ def Sequence(request):
     for value in range(value):
      tSeq.append(key)
   time = main(tSeq,tq,tl)
+  data = 'Time Taken: ' + str(time) + ' seconds'
   for value in tSeq:
    P3_Obj.append(Config.objects.get(SKU=value))
   for x in range(0,Total_Order):
    Seq.objects.filter(Sq_No=x+1).update(SKU=P3_Obj[x])
    P3_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
    P3_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
-   Sequence3 = list(zip(P3_Seq,P3_Config))
- return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'Sequence3':Sequence3}, RequestContext(request))
+   Sequence2 = list(zip(P3_Seq,P3_Config))
+ return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'data':data}, RequestContext(request))
 
 def Start(request):
  Sq_No = request.GET.get('Sq_No', None)

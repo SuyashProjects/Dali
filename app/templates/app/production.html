@@ -42,6 +42,20 @@ Production Plan
    {{ form.ratio.errors }}
    {{ form.ratio }}
    </div></div>
+   <div class="col-xs-1">
+   <label>Skip</label>
+   {{ form.non_field_errors }}
+   <div class="fieldWrapper">
+   {{ form.skips.errors }}
+   {{ form.skips }}
+   </div></div>
+   <div class="col-xs-1">
+   <label>Strip</label>
+   {{ form.non_field_errors }}
+   <div class="fieldWrapper">
+   {{ form.strips.errors }}
+   {{ form.strips }}
+   </div></div>
    <div class="col-xs-2"  style=" margin-left:20px;padding-top:18px; text-align: center;">
    <button type="submit" class="btn-sub" name="config">Submit</button>
    </div>
