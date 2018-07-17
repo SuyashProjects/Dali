@@ -68,7 +68,7 @@
   </div></div>
 
   <div class="col-xs-2"  style="width:10%; text-align:center; margin-top:15px;">
-  <button type="submit" class="btn-sub">Add New</button>
+  <button type="submit" class="btn-sub add">Add New</button>
   </div>
 
   </div>
@@ -125,7 +125,7 @@
   </div></div>
 
   <div class="col-xs-2"  style="width:10%; text-align:center; margin-top:15px;">
-    <button type="submit" class="btn-sub" style="width:85px;">Edit</button>
+    <button type="submit" class="btn-sub edit" style="width:85px;">Edit</button>
   </div>
 
   </div>
@@ -219,7 +219,7 @@ Null</div>
 <!-- Start of Info Ticker Code-->
 <div class="container custom1">
 <div class="blpanel">
-<marquee behavior="scroll" direction="left">{{data|default:"No Alerts to show"}}</marquee>
+<marquee id="ticker" behavior="scroll" direction="left">{{data|default:"No Alerts to show"}}</marquee>
 </div>
 </div>
 <!-- End of Info Ticker Code -->
@@ -260,13 +260,10 @@ Null</div>
 var sku;
   $("#Stn").change(function () {
     sku = $(this).val();
-    console.log(sku)  // get the selected country ID from the HTML input
-    $.ajax({                       // initialize an AJAX request
-      url: '/ajax/populate/',                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
-      data: {'sku': sku       // add the country id to the GET parameters
-      },
+    $.ajax({
+      url: '/ajax/populate/',
+      data: {'sku': sku},
       success: function (data) {
-        console.log(data)  // `data` is the return of the `load_cities` view function
         $("#stn1").html(data['stn1']);
         $("#stn2").html(data['stn2']);
         $("#stn3").html(data['stn3']);
@@ -276,7 +273,8 @@ var sku;
         $("#stn7").html(data['stn7']);
         $("#stn8").html(data['stn8']);
         $("#stn9").html(data['stn9']);
-        $("#stn10").html(data['stn10']);  // replace the contents of the city input with the data that came from the server
+        $("#stn10").html(data['stn10']);
+        $("#ticker").html(data['Output']);
 }});});
 </script>
 {% endblock %}

@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from .models import Constraint,Config,Seq,Station,Shift
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from .forms import SKUForm,EditForm,DeleteForm,OrderForm,ConstraintForm,ShiftForm,StnForm
+from .forms import SKUForm,EditForm,DeleteForm,OrderForm,ShiftForm,StnForm
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
 from gen import main,sub
@@ -25,10 +25,10 @@ def Configuration(request):
    else:
     data='This configuration already exists.'
   else:
-   data='Invalid Form'
+   data='Invalid Configuration'
  form=SKUForm()
  view=Config.objects.all().values()
- return render_to_response('app/configuration.html',{'form':form,'view':view,'data':data},RequestContext(request))
+ return render_to_response('app/configuration.html',{'form':form,'data':data,'view':view,},RequestContext(request))
 
 @csrf_exempt
 def Edit(request):
@@ -93,7 +93,7 @@ def Production(request):
     ratio = Obj['quantity']
    Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio,skips=skips,strips=strips)
   else:
-   print('Config Error')
+   data='Invalid Order.'
  elif 'shift' in request.POST:
   forms = ShiftForm(request.POST)
   if forms.is_valid():
@@ -102,19 +102,12 @@ def Production(request):
    B = Obj['B']
    C = Obj['C']
    Shift.objects.filter(name='Shift').update_or_create(A=A,B=B,C=C)
- elif 'constraint' in request.POST:
-  formed = ConstraintForm(request.POST)
-  if formed.is_valid():
-   Obj = formed.cleaned_data
-   Color_Blocked = Obj['Color_Blocked']
-   Constraint.objects.filter(name='Constraint').update_or_create(Color_Blocked=Color_Blocked)
   else:
-   print('Constraint Error')
+   data='Invalid Shift Timings.'
  form = OrderForm()
  forms = ShiftForm()
- formed = ConstraintForm()
  view = Config.objects.all().values()
- return render_to_response( 'app/production.html',{'form':form,'view':view,'forms':forms,'formed':formed}, RequestContext(request))
+ return render_to_response( 'app/production.html',{'form':form,'forms':forms,'view':view}, RequestContext(request))
 
 def Validate(request):
  data = dict()
@@ -130,6 +123,7 @@ def Validate(request):
  return JsonResponse(data)
 
 def Sequence(request):
+ tq=[]
  Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
  Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
  Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
@@ -138,9 +132,9 @@ def Sequence(request):
   SKU_Count=SKU_Count-1
  Seq_Q=Seq.objects.all().count()
  tl = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
- t = Config.objects.exclude(quantity=0)
- forsub = t.values_list('SKU','quantity','ratio','skips','strips')
- tq = t.values_list('quantity',flat=True)
+ forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips')
+ for key in forsub:
+  tq.append(key[1])
  Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
  Total_Shift_Time=sum(Total_Shift_Time)
@@ -151,22 +145,14 @@ def Sequence(request):
   P2_Obj=[]
   P2_Seq=[]
   P2_Config=[]
-  Sequence1=[]
-  #List for Color Blocking
-  P3_Seq=[]
-  P3_Config=[]
-  P3_Obj=[]
-  SKU_val_color=[]
-  Ratio_val_color=[]
-  tSeq=[]
-  Sequence2=[]
   Seq.objects.filter(Sq_No__range=(Total_Order+1,Seq_Q)).delete()
-  #Phase2
   sku_ratio = Config.objects.filter(SKU__range=(0,SKU_Count)).values_list('SKU','ratio')
   for x in range(0,Total_Order//Ratio_Sum):
    for key,value in sku_ratio:
     for value in range(value):
      Sequenced.append(key)
+  time = main(Sequenced,tq,tl)
+  data = 'Time Taken: ' +str(time//60)+ ' minutes'
   for value in Sequenced:
    P2_Obj.append(Config.objects.get(SKU=value))
    P2_Config.append(Config.objects.filter(SKU=value).values('SKU','model','variant','color','tank'))
@@ -176,28 +162,43 @@ def Sequence(request):
    else:
     Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
    P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values('Sq_No','status'))
-  Sequence1 = list(zip(P2_Seq, P2_Config))
-  #Color Blocking
-  Color_Blocked=Config.objects.exclude(quantity=0).values('SKU').order_by('color')
-  for key in Color_Blocked:
-   SKU_val_color.append(key['SKU'])
-  for i in SKU_val_color:
+  Sequence = list(zip(P2_Seq, P2_Config))
+ data='Capacity is being exceeded, Reduce orders!'
+ return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
+
+def Optimize(request):
+  tq=[]
+  P3_Seq=[]
+  P3_Config=[]
+  P3_Obj=[]
+  Color_Blocked=[]
+  Ratio_val_color=[]
+  tSeq=[]
+  Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
+  Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
+  forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips').order_by('color')
+  tl = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
+  for key in forsub:
+   tq.append(key[1])
+   Color_Blocked.append(key[0])
+  for i in Color_Blocked:
    Ratio_val_color.append(Config.objects.filter(SKU=i).values('ratio')[0]['ratio'])
-  Color_Blocked = list(zip(SKU_val_color, Ratio_val_color))
+  Color_Blocked = list(zip(Color_Blocked, Ratio_val_color))
   for x in range (0,Total_Order//Ratio_Sum):
    for key,value in Color_Blocked:
     for value in range(value):
      tSeq.append(key)
   time = main(tSeq,tq,tl)
-  data = 'Time Taken: ' +str(time)+ ' seconds'
+  data = 'Time Taken: ' +str(time//60)+ ' minutes'
   for value in tSeq:
    P3_Obj.append(Config.objects.get(SKU=value))
    P3_Config.append(Config.objects.filter(SKU=value).values('SKU','model','variant','color','tank'))
   for x in range(0,Total_Order):
    Seq.objects.filter(Sq_No=x+1).update(SKU=P3_Obj[x])
    P3_Seq.append(Seq.objects.filter(Sq_No=x+1).values('Sq_No','status'))
-  Sequence2 = list(zip(P3_Seq,P3_Config))
- return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'data':data}, RequestContext(request))
+  Sequence = list(zip(P3_Seq,P3_Config))
+  return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
+
 
 def Start(request):
  Sq_No = request.GET.get('Sq_No', None)
@@ -212,34 +213,41 @@ def Line(request):
  if request.method == 'POST':
   form = StnForm(request.POST)
   if form.is_valid():
-   form = form.save()
-   form.save()
+   if 'add' in request.POST:
+    form = form.save()
+    form.save()
+   elif 'edit' in request.POST:
+    form = form.cleaned_data
+   else:
+    data='Error'
+  else:
+   data='Invalid Station Timings.'
  form = StnForm()
  return render_to_response('app/line.html',{'form':form}, RequestContext(request))
 
 def Populate(request):
+ data=dict()
+ stn=[]
  sku = request.GET.get('sku', None)
- stn = Station.objects.filter(SKU=sku)
- stn1 = stn.values('stn1')[0]['stn1']
- stn2 = stn.values('stn2')[0]['stn2']
- stn3 = stn.values('stn3')[0]['stn3']
- stn4 = stn.values('stn4')[0]['stn4']
- stn5 = stn.values('stn5')[0]['stn5']
- stn6 = stn.values('stn6')[0]['stn6']
- stn7 = stn.values('stn7')[0]['stn7']
- stn8 = stn.values('stn8')[0]['stn8']
- stn9 = stn.values('stn9')[0]['stn9']
- stn10 = stn.values('stn10')[0]['stn10']
- data = {
-     'stn1' : stn1,
-     'stn2' : stn2,
-     'stn3' : stn3,
-     'stn4' : stn4,
-     'stn5' : stn5,
-     'stn6' : stn6,
-     'stn7' : stn7,
-     'stn8' : stn8,
-     'stn9' : stn9,
-     'stn10' : stn10,
-     }
+ if (Config.objects.filter(SKU=sku).exists()):
+  if (Station.objects.filter(SKU=sku).exists()):
+   stn = Station.objects.filter(SKU=sku).values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')[0]
+   for key in stn:
+    data = {
+    'stn1' : stn[0],
+    'stn2' : stn[1],
+    'stn3' : stn[2],
+    'stn4' : stn[3],
+    'stn5' : stn[4],
+    'stn6' : stn[5],
+    'stn7' : stn[6],
+    'stn8' : stn[7],
+    'stn9' : stn[8],
+    'stn10' : stn[9],
+    'Output' : 'Success!'
+    }
+  else:
+   data['Output'] = 'Stations do not exist.'
+ else:
+  data['Output'] = 'SKU does not exist.'
  return JsonResponse(data)

@@ -26,7 +26,7 @@
 </thead>
 <tbody>
 <tr>
-{% for key in Sequence2 %}
+{% for key in Sequence %}
 {% for value in key.1 %}
 {% for value in key.0 %}<td id="1">OR_{{ value.Sq_No }}</td>{% endfor %}
 <td>{{ value.SKU }}</td>
@@ -42,15 +42,15 @@
 
 <div class="container">
 <div style="text-align:center; margin-top:10px;">
-<button type="" class="btn-sub" style="">Optimize</button>
-<button type="" class="btn-sub" style="margin-left:20px;">Resequence</button>
+<a href="{% url 'Optimize' %}"><button type="" class="btn-sub" style="">Optimize</button></a>
+<a href="{% url 'Sequence' %}"><button type="" class="btn-sub" style="margin-left:20px;">Resequence</button></a>
 </div>
 </div>
 
 <div class="bot bpad">
 <div class="container custom1">
 <div class="blpanel">
-<marquee behavior="scroll" direction="left">{{data|default:"No Alerts to show"}}</marquee>
+<marquee id="ticker" behavior="scroll" direction="left">{{data|default:"No Alerts to show"}}</marquee>
 </div>
 </div>
 
@@ -86,7 +86,7 @@ $(function () {
    tr = tr.slice(3);
    console.log(tr)
      $.ajax({
-       url: '/sequence/ajax/start/',
+       url: '/ajax/start/',
        data: {'Sq_No': tr},
        success: function (data) {
          $("#ticker").html(data['Output']);
