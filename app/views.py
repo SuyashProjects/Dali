@@ -134,24 +134,20 @@ def Sequence(request):
  Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
  Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
  SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
- tl = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
- tq = Config.objects.exclude(quantity=0).values_list('quantity',flat=True)
- tr = Config.objects.exclude(quantity=0).values_list('ratio',flat=True)
- tsku = Config.objects.exclude(quantity=0).values_list('SKU',flat=True)
- for i in range(0,SKU_Count):
-  if Config.objects.filter(SKU=i+1,quantity=0).exists():
-   SKU_Count=SKU_Count-1
- tskips = Config.objects.exclude(quantity=0).values_list('skips',flat=True)
- tstrips = Config.objects.exclude(quantity=0).values_list('strips',flat=True)
- Sequence = sub(tq,tr,tsku,tskips,tstrips)
+ if Config.objects.filter(SKU__range=(0,SKU_Count),quantity=0).exists():
+  SKU_Count=SKU_Count-1
+ Seq_Q=Seq.objects.all().count()
+ tq = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
+ t = Config.objects.exclude(quantity=0)
+ forsub = t.values_list('SKU','quantity','ratio','skips','strips')
+ tl = t.values_list('quantity',flat=True)
+ Sequence = sub(forsub,Total_Order)
  Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
  Total_Shift_Time=sum(Total_Shift_Time)
  Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
  if(Total_Order<Capacity):
   #List for Phase2
-  SKU_val=[]
-  Ratio_val=[]
   Sequenced=[]
   P2_Obj=[]
   P2_Seq=[]
@@ -165,11 +161,9 @@ def Sequence(request):
   Ratio_val_color=[]
   tSeq=[]
   Sequence2=[]
+  Seq.objects.filter(Sq_No__range=(Total_Order+1,Seq_Q)).delete()
   #Phase2
-  for i in range(0,SKU_Count):
-   SKU_val.append(Config.objects.filter(SKU=i+1).values('SKU')[0]['SKU'])
-   Ratio_val.append(Config.objects.filter(SKU=i+1).values('ratio')[0]['ratio'])
-  sku_ratio = list(zip(SKU_val,Ratio_val))
+  sku_ratio = Config.objects.filter(SKU__range=(0,SKU_Count)).values_list('SKU','ratio')
   for x in range(0,Total_Order//Ratio_Sum):
    for key,value in sku_ratio:
     for value in range(value):
@@ -178,7 +172,12 @@ def Sequence(request):
    P2_Obj.append(Config.objects.get(SKU=value))
   for x in range(0,Total_Order):
    if not (Seq.objects.filter(Sq_No=x+1).exists()):
-    Seq.objects.get_or_create(Sq_No=x+1,SKU=P2_Obj[x])
+    Seq.objects.create(Sq_No=x+1,SKU=P2_Obj[x])
+    P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
+    P2_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
+    Sequence1 = list(zip(P2_Seq, P2_Config))
+   else:
+    Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
     P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
     P2_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
     Sequence1 = list(zip(P2_Seq, P2_Config))

@@ -47,9 +47,9 @@ class ConstraintForm(forms.ModelForm):
   fields = ('Color_Blocked',)
 
 class ShiftForm(forms.ModelForm):
-    A = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
-    B = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
-    C = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
+    A = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'max': 8,'class':'form-control'}))
+    B = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'max': 8,'class':'form-control'}))
+    C = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'max': 8,'class':'form-control'}))
     class Meta:
         model = Shift
         fields = ('A','B','C',)
