@@ -1,7 +1,7 @@
 from django import forms
 from .models import Constraint,Config,Seq,Station,Shift
 
-class SKUDef(forms.ModelForm):
+class SKUForm(forms.ModelForm):
  model = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
  variant = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
  color = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -33,7 +33,7 @@ class DeleteForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
  SKU = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'class':'form-control'}))
  quantity = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}))
- ratio = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 0,'class':'form-control'}),required=False)
+ ratio = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'class':'form-control'}),required=False)
  skips = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class':'form-control'}),required=False)
  strips = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class':'form-control'}),required=False)
  class Meta:

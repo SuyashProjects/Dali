@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from .models import Constraint,Config,Seq,Station,Shift
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
-from .forms import SKUDef,EditForm,DeleteForm,OrderForm,ConstraintForm,ShiftForm,StnForm
+from .forms import SKUForm,EditForm,DeleteForm,OrderForm,ConstraintForm,ShiftForm,StnForm
 from django.http import JsonResponse
 from django.db.models import Sum,Max,Count,Min
 from gen import main,sub
@@ -13,20 +13,20 @@ from numpy import sum
 def Configuration(request):
  data=dict()
  if request.method == 'POST':
-  form=SKUDef(request.POST)
+  form=SKUForm(request.POST)
   if form.is_valid():
    Obj=form.cleaned_data
    model=Obj['model']
    variant=Obj['variant']
    color=Obj['color']
-   if (Config.objects.filter(model=model,variant=variant,color=color).exists()):
-    data='This configuration already exists.'
-   else:
-    form=form.save()
+   if not (Config.objects.filter(model=model,variant=variant,color=color).exists()):
     form.save()
+    form=form.save()
+   else:
+    data='This configuration already exists.'
   else:
    data='Invalid Form'
- form=SKUDef()
+ form=SKUForm()
  view=Config.objects.all().values()
  return render_to_response('app/configuration.html',{'form':form,'view':view,'data':data},RequestContext(request))
 
@@ -59,13 +59,13 @@ def Edit(request):
 
 @csrf_exempt
 def Delete(request):
- data = dict()
+ data=dict()
  if request.method == 'POST':
-  form = Delete(request.POST)
+  form=Delete(request.POST)
   if form.is_valid():
    data['form_is_valid'] = True
-   Obj = form.cleaned_data
-   SKU = Obj['SKU']
+   Obj=form.cleaned_data
+   SKU=Obj['SKU']
    Config.objects.filter(SKU=SKU).delete()
    view = Config.objects.all().values()
    data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
@@ -141,7 +141,6 @@ def Sequence(request):
  t = Config.objects.exclude(quantity=0)
  forsub = t.values_list('SKU','quantity','ratio','skips','strips')
  tq = t.values_list('quantity',flat=True)
- Sequence = sub(forsub,Total_Order)
  Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
  Total_Shift_Time=sum(Total_Shift_Time)
@@ -170,16 +169,16 @@ def Sequence(request):
      Sequenced.append(key)
   for value in Sequenced:
    P2_Obj.append(Config.objects.get(SKU=value))
+   P2_Config.append(Config.objects.filter(SKU=value).values('SKU','model','variant','color','tank'))
   for x in range(0,Total_Order):
    if not (Seq.objects.filter(Sq_No=x+1).exists()):
     Seq.objects.create(Sq_No=x+1,SKU=P2_Obj[x])
    else:
     Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
-   P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
-   P2_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
-   Sequence1 = list(zip(P2_Seq, P2_Config))
+   P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values('Sq_No','status'))
+  Sequence1 = list(zip(P2_Seq, P2_Config))
   #Color Blocking
-  Color_Blocked=Config.objects.exclude(quantity=0,ratio=0).values('SKU').order_by('color')
+  Color_Blocked=Config.objects.exclude(quantity=0).values('SKU').order_by('color')
   for key in Color_Blocked:
    SKU_val_color.append(key['SKU'])
   for i in SKU_val_color:
@@ -190,14 +189,14 @@ def Sequence(request):
     for value in range(value):
      tSeq.append(key)
   time = main(tSeq,tq,tl)
-  data = 'Time Taken: ' + str(time) + ' seconds'
+  data = 'Time Taken: ' +str(time)+ ' seconds'
   for value in tSeq:
    P3_Obj.append(Config.objects.get(SKU=value))
+   P3_Config.append(Config.objects.filter(SKU=value).values('SKU','model','variant','color','tank'))
   for x in range(0,Total_Order):
    Seq.objects.filter(Sq_No=x+1).update(SKU=P3_Obj[x])
-   P3_Seq.append(Seq.objects.filter(Sq_No=x+1).values())
-   P3_Config.append(Config.objects.filter(SKU=Seq.objects.filter(Sq_No=x+1).values('SKU_id')[0]['SKU_id']).values())
-   Sequence2 = list(zip(P3_Seq,P3_Config))
+   P3_Seq.append(Seq.objects.filter(Sq_No=x+1).values('Sq_No','status'))
+  Sequence2 = list(zip(P3_Seq,P3_Config))
  return render_to_response( 'app/sequence.html',{'Sequence1':Sequence1,'Sequence2':Sequence2,'data':data}, RequestContext(request))
 
 def Start(request):

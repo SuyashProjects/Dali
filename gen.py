@@ -63,38 +63,38 @@ def sub(forsub,Total_Order):
   tr.append(key[2])
   tskips.append(key[3])
   tstrips.append(key[4])
- SKU=array(tsku)
  Quants=array(tq)
  Ratio=array(tr)
+ SKU=array(tsku)
  Skips=array(tskips).astype(int)
  Strips=array(tstrips).astype(int)
- TQuant=Total_Order
- Seq=zeros(3*TQuant)
+ TQuant=sum(Quants)
+ Seq=zeros(3*Total_Order)
  sz=len(SKU)
  j=0
  Rtemp=Ratio
  qTemp=Quants
- Stemp=array(tsku)
+ Stemp=SKU
  S1temp=Skips
  S2temp=Strips
  while(TQuant>0):
-     if(j==sz):
-         j=0
-     elif(qTemp[j]==0):
-         j=j+1
-     elif((Rtemp[j]>=1) and (qTemp[j]>=1)):
-         ##For Strips
-         if(S2temp[j]==1):
-             li.append(0)
-         ## For Sequencing
-         li.append(Stemp[j])
-         TQuant=TQuant-1
-         Rtemp[j]=Rtemp[j]-1
-         qTemp[j]=qTemp[j]-1
-         ##For Skips
-         if(S1temp[j]==1):
-             li.append(0)
-     elif(Rtemp[j]==0):
-         Rtemp[j]=Ratio[j]
-         j=j+1
+  if(j==sz):
+   j=0
+  elif(qTemp[j]==0):
+   j=j+1
+  elif((Rtemp[j]>=1) and (qTemp[j]>=1)):
+   ##For Strips
+   if(S2temp[j]==1):
+    li.append(0)
+   ## For Sequencing
+   li.append(Stemp[j])
+   TQuant=TQuant-1
+   Rtemp[j]=Rtemp[j]-1
+   qTemp[j]=qTemp[j]-1
+   ##For Skip
+   if(S1temp[j]==1):
+    li.append(0)
+  elif(Rtemp[j]==0):
+   Rtemp[j]=Ratio[j]
+   j=j+1
  return li
