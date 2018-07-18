@@ -8,7 +8,7 @@ class Config(models.Model):
   ('On Hold', 'On Hold'),
   ('Completed', 'Completed'),)
  SKU = models.AutoField(primary_key=True)
- model = models.CharField(max_length=6,unique=True)
+ model = models.CharField(max_length=6)
  variant = models.CharField(max_length=1)
  color = models.CharField(max_length=20)
  time = models.PositiveIntegerField(null=True)
