@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response,redirect,render,get_object_or_404
 from django.template.loader import render_to_string
-from .models import Constraint,Config,Seq,Station,Shift
+from .models import Config,Seq,Station,Shift
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import SKUForm,EditForm,DeleteForm,OrderForm,ShiftForm,StnForm
@@ -11,7 +11,6 @@ from numpy import sum
 
 @csrf_exempt
 def Configuration(request):
- data=dict()
  if request.method == 'POST':
   form=SKUForm(request.POST)
   if form.is_valid():
@@ -27,6 +26,7 @@ def Configuration(request):
   else:
    data='Invalid Configuration'
  form=SKUForm()
+ data=''
  view=Config.objects.all().values()
  return render_to_response('app/configuration.html',{'form':form,'data':data,'view':view,},RequestContext(request))
 
@@ -106,11 +106,12 @@ def Production(request):
    data='Invalid Shift Timings.'
  form = OrderForm()
  forms = ShiftForm()
+ data =''
  view = Config.objects.all().values()
- return render_to_response( 'app/production.html',{'form':form,'forms':forms,'view':view}, RequestContext(request))
+ return render_to_response( 'app/production.html',{'form':form,'forms':forms,'data':data,'view':view}, RequestContext(request))
 
 def Validate(request):
- data = dict()
+ data=dict()
  Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
  Total_Shift_Time=sum(Total_Shift_Time)
@@ -140,7 +141,6 @@ def Sequence(request):
  Total_Shift_Time=sum(Total_Shift_Time)
  Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
  if(Total_Order<Capacity):
-  #List for Phase2
   Sequenced=[]
   P2_Obj=[]
   P2_Seq=[]
@@ -163,7 +163,8 @@ def Sequence(request):
     Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
    P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values('Sq_No','status'))
   Sequence = list(zip(P2_Seq, P2_Config))
- data='Capacity is being exceeded, Reduce orders!'
+ else:
+  data='Capacity is being exceeded, Reduce orders!'
  return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
 
 def Optimize(request):
@@ -210,28 +211,42 @@ def Start(request):
 
 @csrf_exempt
 def Line(request):
- if request.method == 'POST':
+ if 'add' in request.POST:
   form = StnForm(request.POST)
   if form.is_valid():
-   if 'add' in request.POST:
-    form = form.save()
-    form.save()
-   elif 'edit' in request.POST:
-    form = form.cleaned_data
-   else:
-    data='Error'
+   form = form.save()
+   form.save()
   else:
-   data='Invalid Station Timings.'
+   data = 'Cannot Add,Invalid Station Timings'
+ elif 'edit' in request.POST:
+  print(request.POST)
+  form = StnForm(request.POST)
+  if form.is_valid():
+   Obj = form.cleaned_data
+   SKU = Obj['SKU']
+   stn1 = Obj['stn1']
+   stn2 = Obj['stn2']
+   stn3 = Obj['stn3']
+   stn4 = Obj['stn4']
+   stn5 = Obj['stn5']
+   stn6 = Obj['stn6']
+   stn7 = Obj['stn7']
+   stn8 = Obj['stn8']
+   stn9 = Obj['stn9']
+   stn10 = Obj['stn10']
+   Station.objects.filter(SKU=SKU).update(stn1=stn1,stn2=stn2,stn3=stn3,stn4=stn4,stn5=stn5,stn6=stn6,stn7=stn7,stn8=stn8,stn9=stn9,stn10=stn10)
+  else:
+   data = 'Cannot Edit,Invalid Station Timings'
  form = StnForm()
- return render_to_response('app/line.html',{'form':form}, RequestContext(request))
+ return render_to_response('app/line.html',{'form':form,}, RequestContext(request))
 
 def Populate(request):
  data=dict()
  stn=[]
- sku = request.GET.get('sku', None)
- if (Config.objects.filter(SKU=sku).exists()):
-  if (Station.objects.filter(SKU=sku).exists()):
-   stn = Station.objects.filter(SKU=sku).values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')[0]
+ SKU = request.GET.get('sku', None)
+ if (Config.objects.filter(SKU=SKU).exists()):
+  if (Station.objects.filter(SKU=SKU).exists()):
+   stn = Station.objects.filter(SKU=SKU).values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')[0]
    for key in stn:
     data = {
     'stn1' : stn[0],

@@ -1,14 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-class Constraint(models.Model):
- name = models.CharField(max_length=100)
- Color_Blocked = models.BooleanField()
- def submit(self):
-  self.save()
- def __str__(self):
-  return str(self.name)
-
 class Config(models.Model):
  Status = (
   ('Queued', 'Queued'),
@@ -16,7 +8,7 @@ class Config(models.Model):
   ('On Hold', 'On Hold'),
   ('Completed', 'Completed'),)
  SKU = models.AutoField(primary_key=True)
- model = models.CharField(max_length=6)
+ model = models.CharField(max_length=6,unique=True)
  variant = models.CharField(max_length=1)
  color = models.CharField(max_length=20)
  time = models.PositiveIntegerField(null=True)
@@ -38,7 +30,7 @@ class Seq(models.Model):
   ('Running', 'Running'),
   ('On Hold', 'On Hold'),
   ('Completed', 'Completed'),)
- Sq_No = models.PositiveSmallIntegerField(default=0)
+ Sq_No = models.PositiveSmallIntegerField(default=0,primary_key=True)
  SKU = models.ForeignKey(Config, on_delete=models.CASCADE,null=True)
  status = models.CharField(max_length=10, default='Queued', choices=Status)
  def submit(self):
@@ -47,7 +39,7 @@ class Seq(models.Model):
   return str(self.Sq_No)
 
 class Station(models.Model):
- SKU = models.ForeignKey(Config, on_delete=models.CASCADE)
+ SKU = models.OneToOneField(Config, on_delete=models.CASCADE,primary_key=True)
  stn1 = models.PositiveIntegerField(default=0)
  stn2 = models.PositiveIntegerField(default=0)
  stn3 = models.PositiveIntegerField(default=0)
@@ -64,7 +56,7 @@ class Station(models.Model):
   return str(self.SKU)
 
 class Shift(models.Model):
- name = models.CharField(max_length=5)
+ name = models.CharField(max_length=5,unique=True)
  A = models.PositiveIntegerField(default=7)
  B = models.PositiveIntegerField(default=7)
  C = models.PositiveIntegerField(default=7)
