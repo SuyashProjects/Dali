@@ -1,54 +1,57 @@
 from numpy import sum,array,amax,zeros,unique
 
-def main(tSeq,tq,tl):
-   a=array(tl)
-   q=array(tq)
-   Seq=array(tSeq)
-   Line=zeros(10)
-   sz=len(Seq)
-   Time=zeros(10)
-   Total_time=0
+def main(tSeq,tl,forsub):
+ tSKU=[]
+ StnTime=array(tl)
+ Seq=array(tSeq)
+ for key in forsub:
+  tSKU.append(key[0])
+ SKU=array(tSKU)
+ Total_Order=len(Seq)
+ Num_SKU=len(unique(Seq))
+ Line=zeros(10)
+ Time=zeros(10)
+ Total_Time=0
+ float(Total_Time)
+ j=9
+ for i in range(0,Total_Order+j):
+  if(i>(Total_Order+j-10)):
+   while(j!=0):
+    Line[j]=Line[j-1]
+    j=j-1
    j=9
-   for i in range(69):
-       if(i>59):
-           while(j!=0):
-               Line[j]=Line[j-1]
-               j=j-1
-           j=9
-           Line[0]=0
-           print(Line)
-           for k in range(0,10):
-               if(Line[k]==1):
-                   Time[k]=a[0][k]
-               elif(Line[k]==2):
-                   Time[k]=a[1][k]
-               elif(Line[k]==3):
-                   Time[k]=a[2][k]
-               else:
-                   Time[k]=0
-           TKTME=amax(Time)
-           print(TKTME)
-           Total_time=Total_time+TKTME
-       else:
-           while(j!=0):
-               Line[j]=Line[j-1]
-               j=j-1
-           j=9
-           Line[0]=Seq[i]
-           print(Line)
-           for k in range(0,10):
-               if(Line[k]==1):
-                   Time[k]=a[0][k]
-               elif(Line[k]==2):
-                   Time[k]=a[1][k]
-               elif(Line[k]==3):
-                   Time[k]=a[2][k]
-               else:
-                   Time[k]=0
-           TKTME=amax(Time)
-           print(TKTME)
-           Total_time=Total_time+TKTME
-   return Total_time
+   Line[0]=0
+   print(Line)
+   for k in range(0,10):
+    for l in range(0,Num_SKU):
+     if(Line[k]==SKU[l]):
+      Time[k]=StnTime[l][k]
+      break
+     elif(Line[k]==0):
+      Time[k]=0
+      break
+   Takt_Time=amax(Time)
+   print(Takt_Time)
+   Total_Time=Total_Time+Takt_Time
+  else:
+   while(j!=0):
+    Line[j]=Line[j-1]
+    j=j-1
+   j=9
+   Line[0]=Seq[i]
+   print(Line)
+   for k in range(0,10):
+    for l in range(0,Num_SKU):
+     if(Line[k]==SKU[l]):
+      Time[k]=StnTime[l][k]
+      break
+     elif(Line[k]==0):
+      Time[k]=0
+      break
+   Takt_Time=amax(Time)
+   print(Takt_Time)
+   Total_Time=Total_Time+Takt_Time
+ return round(Total_Time/60,2)
 
 def sub(forsub,Total_Order):
  tsku=[]

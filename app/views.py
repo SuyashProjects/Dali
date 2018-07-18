@@ -129,7 +129,6 @@ def Validate(request):
  return JsonResponse(data)
 
 def Sequence(request):
- tq=[]
  Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
  Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
  Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
@@ -137,81 +136,65 @@ def Sequence(request):
  if Config.objects.filter(SKU__range=(0,SKU_Count),quantity=0).exists():
   SKU_Count=SKU_Count-1
  Seq_Q=Seq.objects.all().count()
- tl = Config.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
- forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips')
- for key in forsub:
-  tq.append(key[1])
+ forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips','stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
+ tl = forsub.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
  Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
  Total_Shift_Time=sum(Total_Shift_Time)
  Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
  if(Total_Order<Capacity):
-  Sequenced=[]
+  tSeq=[]
   P2_Obj=[]
-  P2_Seq=[]
-  P2_Config=[]
   Seq.objects.filter(Sq_No__range=(Total_Order+1,Seq_Q)).delete()
-  sku_ratio = Config.objects.filter(SKU__range=(0,SKU_Count)).values_list('SKU','ratio')
+  sku_ratio = forsub.values_list('SKU','ratio')
   for x in range(0,Total_Order//Ratio_Sum):
    for key,value in sku_ratio:
     for value in range(value):
-     Sequenced.append(key)
-  time = main(Sequenced,tq,tl)
-  data = 'Time Taken: ' +str(time//60)+ ' minutes'
-  for value in Sequenced:
+     tSeq.append(key)
+  time = main(tSeq,tl,forsub)
+  data = 'Time Taken: ' +str(time)+ ' minutes'
+  for value in tSeq:
    P2_Obj.append(Config.objects.get(SKU=value))
-   P2_Config.append(Config.objects.filter(SKU=value).values('SKU','model','variant','color','tank'))
   for x in range(0,Total_Order):
    if not (Seq.objects.filter(Sq_No=x+1).exists()):
     Seq.objects.create(Sq_No=x+1,SKU=P2_Obj[x])
    else:
     Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
-   P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values('Sq_No','status'))
-  Sequence = list(zip(P2_Seq, P2_Config))
+  Sequence=Seq.objects.values('Sq_No','SKU__SKU','SKU__model','SKU__variant','SKU__color','SKU__tank','status')
  else: #Check
   data='Capacity is being exceeded, Reduce orders!'
  return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
 
 def Optimize(request):
-  tq=[]
-  P3_Seq=[]
-  P3_Config=[]
-  P3_Obj=[]
-  Color_Blocked=[]
-  Ratio_val_color=[]
   tSeq=[]
+  P3_Obj=[]
   Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
   Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
-  forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips').order_by('color')
-  tl = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
-  for key in forsub:
-   tq.append(key[1])
-   Color_Blocked.append(key[0])
-  for i in Color_Blocked:
-   Ratio_val_color.append(Config.objects.filter(SKU=i).values('ratio')[0]['ratio'])
-  Color_Blocked = list(zip(Color_Blocked, Ratio_val_color))
+  forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips','stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10').order_by('color')
+  tl = forsub.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
+  Color_Blocked = forsub.values_list('SKU','ratio')
   for x in range (0,Total_Order//Ratio_Sum):
    for key,value in Color_Blocked:
     for value in range(value):
      tSeq.append(key)
-  time = main(tSeq,tq,tl)
-  data = 'Time Taken: ' +str(time//60)+ ' minutes'
+  time = main(tSeq,tl,forsub)
+  data = 'Time Taken: ' +str(time)+ ' minutes'
   for value in tSeq:
    P3_Obj.append(Config.objects.get(SKU=value))
-   P3_Config.append(Config.objects.filter(SKU=value).values('SKU','model','variant','color','tank'))
   for x in range(0,Total_Order):
    Seq.objects.filter(Sq_No=x+1).update(SKU=P3_Obj[x])
-   P3_Seq.append(Seq.objects.filter(Sq_No=x+1).values('Sq_No','status'))
-  Sequence = list(zip(P3_Seq,P3_Config))
+  Sequence=Seq.objects.values('Sq_No','SKU__SKU','SKU__model','SKU__variant','SKU__color','SKU__tank','status')
   return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
 
 
 def Start(request):
+ Sequence=[]
+ Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
  Sq_No = request.GET.get('Sq_No', None)
  Seq.objects.filter(Sq_No=Sq_No).update(status='Running')
- view =  Seq.objects.filter(SKU_id=sku).values('status')
- context = {'view': view}
- data['html_form'] = render_to_string('app/partial_list.html',context,request=request)
+ Sequence=Seq.objects.values('Sq_No','SKU__SKU','SKU__model','SKU__variant','SKU__color','SKU__tank','status')
+ context = {'Sequence':Sequence}
+ data['html_form'] = render_to_string('app/partial_seq.html',context,request=request)
  return JsonResponse(data)
 
 @csrf_exempt
