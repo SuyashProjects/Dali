@@ -161,8 +161,10 @@ def Sequence(request):
    else:
     Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
   Sequence=Seq.objects.values('Sq_No','SKU__SKU','SKU__model','SKU__variant','SKU__color','SKU__tank','status')
- else: #Check
+ else:
   data='Capacity is being exceeded, Reduce orders!'
+  Sequence=[]
+  return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
  return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
 
 def Optimize(request):
