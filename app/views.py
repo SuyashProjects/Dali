@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response,redirect,render,get_object_or_404
 from django.template.loader import render_to_string
-from .models import Config,Seq,Station,Shift
+from .models import Config,Seq,Shift
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import SKUForm,EditForm,DeleteForm,OrderForm,ShiftForm,StnForm
@@ -18,9 +18,12 @@ def Configuration(request):
    model=Obj['model']
    variant=Obj['variant']
    color=Obj['color']
+   time=Obj['time']
    if not (Config.objects.filter(model=model,variant=variant,color=color).exists()):
     form.save()
     form=form.save()
+    Config.objects.filter(SKU=SKU).update(stn1=time,stn2=time,stn3=time,stn4=time,stn5=time,stn6=time,stn7=time,stn8=time,stn9=time,stn10=time)
+    data='New SKU added.Go to Line Monitoring to configure Station TAKT times.'
    else:
     data='This configuration already exists.'
   else:
@@ -101,7 +104,7 @@ def Production(request):
    A = Obj['A']
    B = Obj['B']
    C = Obj['C']
-   Shift.objects.filter(name='Shift').update_or_create(A=A,B=B,C=C)
+   Shift.objects.filter(name='Shift').update(A=A,B=B,C=C)
   else:
    data='Invalid Shift Timings.'
  form = OrderForm()
@@ -132,7 +135,8 @@ def Sequence(request):
  if Config.objects.filter(SKU__range=(0,SKU_Count),quantity=0).exists():
   SKU_Count=SKU_Count-1
  Seq_Q=Seq.objects.all().count()
- tl = Station.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
+ tl = Config.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
+ print(tl)
  forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips')
  for key in forsub:
   tq.append(key[1])
@@ -211,15 +215,7 @@ def Start(request):
 
 @csrf_exempt
 def Line(request):
- if 'add' in request.POST:
-  form = StnForm(request.POST)
-  if form.is_valid():
-   form = form.save()
-   form.save()
-  else:
-   data = 'Cannot Add,Invalid Station Timings'
- elif 'edit' in request.POST:
-  print(request.POST)
+ if request.method == 'POST':
   form = StnForm(request.POST)
   if form.is_valid():
    Obj = form.cleaned_data
@@ -234,9 +230,9 @@ def Line(request):
    stn8 = Obj['stn8']
    stn9 = Obj['stn9']
    stn10 = Obj['stn10']
-   Station.objects.filter(SKU=SKU).update(stn1=stn1,stn2=stn2,stn3=stn3,stn4=stn4,stn5=stn5,stn6=stn6,stn7=stn7,stn8=stn8,stn9=stn9,stn10=stn10)
+   Config.objects.filter(SKU=SKU).update(stn1=stn1,stn2=stn2,stn3=stn3,stn4=stn4,stn5=stn5,stn6=stn6,stn7=stn7,stn8=stn8,stn9=stn9,stn10=stn10)
   else:
-   data = 'Cannot Edit,Invalid Station Timings'
+   data = 'Cannot Add,Invalid Station Timings'
  form = StnForm()
  return render_to_response('app/line.html',{'form':form,}, RequestContext(request))
 
@@ -245,24 +241,21 @@ def Populate(request):
  stn=[]
  SKU = request.GET.get('sku', None)
  if (Config.objects.filter(SKU=SKU).exists()):
-  if (Station.objects.filter(SKU=SKU).exists()):
-   stn = Station.objects.filter(SKU=SKU).values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')[0]
-   for key in stn:
-    data = {
-    'stn1' : stn[0],
-    'stn2' : stn[1],
-    'stn3' : stn[2],
-    'stn4' : stn[3],
-    'stn5' : stn[4],
-    'stn6' : stn[5],
-    'stn7' : stn[6],
-    'stn8' : stn[7],
-    'stn9' : stn[8],
-    'stn10' : stn[9],
-    'Output' : 'Success!'
-    }
-  else:
-   data['Output'] = 'Stations do not exist.'
+  stn = Config.objects.filter(SKU=SKU).values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')[0]
+  for key in stn:
+   data = {
+   'stn1' : stn[0],
+   'stn2' : stn[1],
+   'stn3' : stn[2],
+   'stn4' : stn[3],
+   'stn5' : stn[4],
+   'stn6' : stn[5],
+   'stn7' : stn[6],
+   'stn8' : stn[7],
+   'stn9' : stn[8],
+   'stn10' : stn[9],
+   'Output' : 'Success!'
+   }
  else:
   data['Output'] = 'SKU does not exist.'
  return JsonResponse(data)
