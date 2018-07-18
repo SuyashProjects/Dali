@@ -23,8 +23,7 @@
 <th class="th-lg">Tank</th>
 <th class="th-lg">Status</th>
 </tr>
-</thead>
-<tbody>
+</thead><tbody id="tbody">
 <tr>{% for value in Sequence %}
 <td id="1">OR_{{ value.Sq_No }}</td>
 <td>{{ value.SKU__SKU }}</td>
@@ -82,12 +81,11 @@ $(function () {
    var btn = $(this);
    var tr = $("#1").html();
    tr = tr.slice(3);
-   console.log(tr)
      $.ajax({
        url: '/ajax/start/',
        data: {'Sq_No': tr},
        success: function (data) {
-         $("#ticker").html(data['Output']);
+         $("#tbody").html(data.Sequence);
        }
      });
    };

@@ -188,13 +188,12 @@ def Optimize(request):
 
 
 def Start(request):
- Sequence=[]
- Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
+ data=dict()
  Sq_No = request.GET.get('Sq_No', None)
  Seq.objects.filter(Sq_No=Sq_No).update(status='Running')
  Sequence=Seq.objects.values('Sq_No','SKU__SKU','SKU__model','SKU__variant','SKU__color','SKU__tank','status')
  context = {'Sequence':Sequence}
- data['html_form'] = render_to_string('app/partial_seq.html',context,request=request)
+ data['Sequence'] = render_to_string('app/partial_seq.html',context,request=request)
  return JsonResponse(data)
 
 @csrf_exempt
