@@ -138,7 +138,6 @@ def Sequence(request):
  Seq_Q=Seq.objects.all().count()
  forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips','stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
  tl = forsub.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
- Div = list(Config.objects.aggregate(Min('quantity')).values())[0]
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
  Total_Shift_Time=sum(Total_Shift_Time)
  Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
