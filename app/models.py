@@ -14,8 +14,8 @@ class Config(models.Model):
  time = models.PositiveIntegerField(null=True)
  quantity = models.PositiveIntegerField(default=0)
  ratio = models.PositiveIntegerField(default=0)
- skips = models.BooleanField()
- strips = models.BooleanField()
+ skips = models.BooleanField(default=False)
+ strips = models.BooleanField(default=False)
  tank = models.CharField(max_length=10)
  description = models.CharField(max_length=50,default=None,blank=True,null=True)
  status = models.CharField(max_length=10, default='Queued', choices=Status)
@@ -33,6 +33,19 @@ class Config(models.Model):
   self.save()
  def __str__(self):
   return str(self.SKU)
+ def save(self, *args, **kwargs):
+  self.stn1 = self.time
+  self.stn2 = self.time
+  self.stn3 = self.time
+  self.stn4 = self.time
+  self.stn5 = self.time
+  self.stn6 = self.time
+  self.stn7 = self.time
+  self.stn8 = self.time
+  self.stn9 = self.time
+  self.stn10 = self.time
+  super(Config, self).save(*args, **kwargs) # Call the "real" save() method.
+
 
 class Seq(models.Model):
  Status = (

@@ -22,10 +22,12 @@ def Configuration(request):
    if not (Config.objects.filter(model=model,variant=variant,color=color).exists()):
     form.save()
     form=form.save()
-    Config.objects.filter(SKU=SKU).update(stn1=time,stn2=time,stn3=time,stn4=time,stn5=time,stn6=time,stn7=time,stn8=time,stn9=time,stn10=time)
-    data='New SKU added.Go to Line Monitoring to configure Station TAKT times.'
+    data='New SKU added. Go to Line Monitoring to configure station TAKT times.'
    else:
     data='This configuration already exists.'
+    form=SKUForm()
+    view=Config.objects.all().values()
+    return render_to_response('app/configuration.html',{'form':form,'data':data,'view':view,},RequestContext(request))
   else:
    data='Invalid Configuration'
  form=SKUForm()
@@ -136,7 +138,6 @@ def Sequence(request):
   SKU_Count=SKU_Count-1
  Seq_Q=Seq.objects.all().count()
  tl = Config.objects.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
- print(tl)
  forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips')
  for key in forsub:
   tq.append(key[1])
@@ -167,7 +168,7 @@ def Sequence(request):
     Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
    P2_Seq.append(Seq.objects.filter(Sq_No=x+1).values('Sq_No','status'))
   Sequence = list(zip(P2_Seq, P2_Config))
- else:
+ else: #Check
   data='Capacity is being exceeded, Reduce orders!'
  return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
 
@@ -220,21 +221,27 @@ def Line(request):
   if form.is_valid():
    Obj = form.cleaned_data
    SKU = Obj['SKU']
-   stn1 = Obj['stn1']
-   stn2 = Obj['stn2']
-   stn3 = Obj['stn3']
-   stn4 = Obj['stn4']
-   stn5 = Obj['stn5']
-   stn6 = Obj['stn6']
-   stn7 = Obj['stn7']
-   stn8 = Obj['stn8']
-   stn9 = Obj['stn9']
-   stn10 = Obj['stn10']
-   Config.objects.filter(SKU=SKU).update(stn1=stn1,stn2=stn2,stn3=stn3,stn4=stn4,stn5=stn5,stn6=stn6,stn7=stn7,stn8=stn8,stn9=stn9,stn10=stn10)
+   if (Config.objects.filter(SKU=SKU).exists()):
+    stn1 = Obj['stn1']
+    stn2 = Obj['stn2']
+    stn3 = Obj['stn3']
+    stn4 = Obj['stn4']
+    stn5 = Obj['stn5']
+    stn6 = Obj['stn6']
+    stn7 = Obj['stn7']
+    stn8 = Obj['stn8']
+    stn9 = Obj['stn9']
+    stn10 = Obj['stn10']
+    Config.objects.filter(SKU=SKU).update(stn1=stn1,stn2=stn2,stn3=stn3,stn4=stn4,stn5=stn5,stn6=stn6,stn7=stn7,stn8=stn8,stn9=stn9,stn10=stn10)
+   else:
+    data = 'SKU does not exist.'
+    form = StnForm()
+    return render_to_response('app/line.html',{'form':form,'data':data}, RequestContext(request))
   else:
    data = 'Cannot Add,Invalid Station Timings'
+ data=''
  form = StnForm()
- return render_to_response('app/line.html',{'form':form,}, RequestContext(request))
+ return render_to_response('app/line.html',{'form':form,'data':data}, RequestContext(request))
 
 def Populate(request):
  data=dict()
