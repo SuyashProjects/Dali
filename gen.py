@@ -1,9 +1,9 @@
 from numpy import sum,array,amax,zeros,unique
 
-def main(New,tl,forsub):
+def main(Sequence,tl,forsub):
  tSKU=[]
  StnTime=array(tl)
- Seq=array(New)
+ Seq=array(Sequence)
  for key in forsub:
   tSKU.append(key[0])
  SKU=array(tSKU)

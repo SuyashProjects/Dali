@@ -21,7 +21,7 @@ def Configuration(request):
    if not (Config.objects.filter(model=model,variant=variant,color=color).exists()):
     form.save()
     form=form.save()
-    data='New SKU added. Go to Line Monitoring to configure station TAKT times.'
+    data='Sequence SKU added. Go to Line Monitoring to configure station TAKT times.'
    else:
     data='This configuration already exists.'
     form=SKUForm()
@@ -52,8 +52,8 @@ def Edit(request):
    tank=Obj['tank']
    time=Obj['time']
    description=Obj['description']
-   if not Config.objects.filter(model=model,variant=variant,color=color).exists():
-    Config.objects.filter(SKU=SKU).update(model=model,variant=variant,color=color,tank=tank,time=time,description=description)
+   if Config.objects.filter(SKU=SKU).exists():
+    Config.objects.filter(SKU=SKU).update(model=model,variant=variant,color=color,tank=tank,time=time,description=description,stn1=time,stn2=time,stn3=time,stn4=time,stn5=time,stn6=time,stn7=time,stn8=time,stn9=time,stn10=time)
    view=Config.objects.all().values()
    data['sku_list']=render_to_string('app/partial_list.html', {'view': view})
   else:
@@ -76,7 +76,8 @@ def Delete(request):
    data['form_is_valid'] = True
    Obj=form.cleaned_data
    SKU=Obj['SKU']
-   Config.objects.filter(SKU=SKU).delete()
+   if Config.objects.filter(SKU=SKU).exists():
+    Config.objects.filter(SKU=SKU).delete()
    view = Config.objects.all().values()
    data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
   else:
@@ -162,8 +163,8 @@ def Sequence(request):
   return render(request,'app/sequence.html',{'Sequence':Sequence,'data':data})
  Seq_Q=Seq.objects.all().count()
  forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips','stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
- New=sub(forsub,Total_Order)
- Total_Order=len(New)
+ Sequence=sub(forsub,Total_Order)
+ Total_Order=len(Sequence)
  tl = forsub.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
  Total_Shift_Time=sum(Total_Shift_Time)
@@ -172,9 +173,9 @@ def Sequence(request):
   tSeq=[]
   P2_Obj=[]
   Seq.objects.filter(Sq_No__range=(Total_Order+1,Seq_Q)).delete()
-  time = main(New,tl,forsub)
+  time = main(Sequence,tl,forsub)
   data = 'Time Taken: ' +str(time)+ ' minutes'
-  for value in New:
+  for value in Sequence:
    if value==0:
     P2_Obj.append(0)
    else:
@@ -203,11 +204,11 @@ def Optimize(request):
   Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
   Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
   forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips','stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10').order_by('color')
-  New=sub(forsub,Total_Order)
+  Sequence=sub(forsub,Total_Order)
   tl = forsub.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
-  time = main(New,tl,forsub)
+  time = main(Sequence,tl,forsub)
   data = 'Time Taken: ' +str(time)+ ' minutes'
-  for value in New:
+  for value in Sequence:
    if value==0:
     P3_Obj.append(0)
    else:
