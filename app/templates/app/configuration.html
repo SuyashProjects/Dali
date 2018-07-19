@@ -22,48 +22,48 @@ New SKU
 <label>Model</label>
 {{ form.non_field_errors }}
 <div class="fieldWrapper">
-{{ form.model.errors }}
 {{ form.model }}
+{{ form.model.errors }}
 </div></div>
 
 <div class="col-xs-1"style="width:13.5%;">
 <label>Variant</label>
 {{ form.non_field_errors }}
 <div class="fieldWrapper">
-{{ form.variant.errors }}
 {{ form.variant }}
+{{ form.variant.errors }}
 </div></div>
 
 <div class="col-xs-1" style="width:13.5%;">
 <label>Color</label>
 {{ form.non_field_errors }}
 <div class="fieldWrapper">
-{{ form.color.errors }}
 {{ form.color }}
+{{ form.color.errors }}
 </div></div>
 
 <div class="col-xs-1" style="width:13.5%;">
 <label>Tank</label>
 {{ form.non_field_errors }}
 <div class="fieldWrapper">
-{{ form.tank.errors }}
 {{ form.tank }}
+{{ form.tank.errors }}
 </div></div>
 
 <div class="col-xs-1" style="width:13.5%;">
 <label>Time</label>
 {{ form.non_field_errors }}
 <div class="fieldWrapper">
-{{ form.time.errors }}
 {{ form.time }}
+{{ form.time.errors }}
 </div></div>
 
 <div class="col-xs-1" style="width:13.5%;">
 <label>Additional</label>
 {{ form.non_field_errors }}
 <div class="fieldWrapper">
-{{ form.description.errors }}
 {{ form.description }}
+{{ form.description.errors }}
 </div></div>
 
 <div class="col-xs-1"  style="text-align:center; margin-top:20px;">
@@ -180,17 +180,6 @@ EXISTING SKU CONFIGURATIONS
 {% block javascript %}
 <script>
 $(function () {
-  var Status = function () {
-   var btn = $(this);
-     $.ajax({
-       url: '/form1/',
-       type: 'get',
-       dataType: 'json',
-       success: function (data) {
-         $("#ticker").html(data['Output']);
-       }
-     });
-   };
  var EditForm = function () {
   var btn = $(this);
     $.ajax({
@@ -259,7 +248,6 @@ $(function () {
         });
         return false;
           };
-  $(".add").click(Status);
   $(".edit").click(EditForm);
   $("#modaledit").on("submit", ".edit_popup", saveForm);
   $(".delete").click(DelForm);

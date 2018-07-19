@@ -1,7 +1,6 @@
-from django.shortcuts import render_to_response,redirect,render,get_object_or_404
+from django.shortcuts import render
 from django.template.loader import render_to_string
 from .models import Config,Seq,Shift
-from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from .forms import SKUForm,EditForm,DeleteForm,OrderForm,ShiftForm,StnForm
 from django.http import JsonResponse
@@ -27,19 +26,22 @@ def Configuration(request):
     data='This configuration already exists.'
     form=SKUForm()
     view=Config.objects.all().values()
-    return render_to_response('app/configuration.html',{'form':form,'data':data,'view':view,},RequestContext(request))
+    return render(request,'app/configuration.html',{'form':form,'data':data,'view':view,})
   else:
    data='Invalid Configuration'
+   form=SKUForm(request.POST)
+   view=Config.objects.all().values()
+   return render(request,'app/configuration.html',{'form':form,'data':data,'view':view,})
  form=SKUForm()
  data=''
  view=Config.objects.all().values()
- return render_to_response('app/configuration.html',{'form':form,'data':data,'view':view,},RequestContext(request))
+ return render(request,'app/configuration.html',{'form':form,'data':data,'view':view,})
 
 @csrf_exempt
 def Edit(request):
  data=dict()
  if request.method == 'POST':
-  form=Edit(request.POST)
+  form=EditForm(request.POST)
   if form.is_valid():
    data['form_is_valid'] = True
    Obj=form.cleaned_data
@@ -56,6 +58,9 @@ def Edit(request):
    data['sku_list']=render_to_string('app/partial_list.html', {'view': view})
   else:
    data['form_is_valid'] = False
+   form = EditForm(request.POST)
+   context = {'form': form}
+   data['html_form'] = render_to_string('app/edit_popup.html',context,request=request)
  else:
   form=EditForm()
   context={'form': form}
@@ -66,7 +71,7 @@ def Edit(request):
 def Delete(request):
  data=dict()
  if request.method == 'POST':
-  form=Delete(request.POST)
+  form=DeleteForm(request.POST)
   if form.is_valid():
    data['form_is_valid'] = True
    Obj=form.cleaned_data
@@ -76,6 +81,9 @@ def Delete(request):
    data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
   else:
    data['form_is_valid'] = False
+   form = DeleteForm(request.POST)
+   context = {'form': form}
+   data['html_form'] = render_to_string('app/delete_popup.html',context,request=request)
  else:
   form = DeleteForm()
   context = {'form': form}
@@ -98,7 +106,11 @@ def Production(request):
     ratio = Obj['quantity']
    Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio,skips=skips,strips=strips)
   else:
+   form = OrderForm(request.POST)
+   forms = ShiftForm()
    data='Invalid Order.'
+   view = Config.objects.all().values()
+   return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
  elif 'shift' in request.POST:
   forms = ShiftForm(request.POST)
   if forms.is_valid():
@@ -108,12 +120,16 @@ def Production(request):
    C = Obj['C']
    Shift.objects.filter(name='Shift').update(A=A,B=B,C=C)
   else:
+   form = OrderForm()
+   forms = ShiftForm(request.POST)
    data='Invalid Shift Timings.'
+   view = Config.objects.all().values()
+   return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
  form = OrderForm()
  forms = ShiftForm()
  data =''
  view = Config.objects.all().values()
- return render_to_response( 'app/production.html',{'form':form,'forms':forms,'data':data,'view':view}, RequestContext(request))
+ return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
 
 def Validate(request):
  data=dict()
@@ -163,8 +179,8 @@ def Sequence(request):
  else:
   data='Capacity is being exceeded, Reduce orders!'
   Sequence=[]
-  return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
- return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
+  return render(request,'app/sequence.html',{'Sequence':Sequence,'data':data})
+ return render(request,'app/sequence.html',{'Sequence':Sequence,'data':data})
 
 def Optimize(request):
   tSeq=[]
@@ -185,7 +201,7 @@ def Optimize(request):
   for x in range(0,Total_Order):
    Seq.objects.filter(Sq_No=x+1).update(SKU=P3_Obj[x])
   Sequence=Seq.objects.values('Sq_No','SKU__SKU','SKU__model','SKU__variant','SKU__color','SKU__tank','status')
-  return render_to_response( 'app/sequence.html',{'Sequence':Sequence,'data':data}, RequestContext(request))
+  return render(request,'app/sequence.html',{'Sequence':Sequence,'data':data})
 
 
 def Start(request):
@@ -217,14 +233,16 @@ def Line(request):
     stn10 = Obj['stn10']
     Config.objects.filter(SKU=SKU).update(stn1=stn1,stn2=stn2,stn3=stn3,stn4=stn4,stn5=stn5,stn6=stn6,stn7=stn7,stn8=stn8,stn9=stn9,stn10=stn10)
    else:
+    form = StnForm(request.POST)
     data = 'SKU does not exist.'
-    form = StnForm()
-    return render_to_response('app/line.html',{'form':form,'data':data}, RequestContext(request))
+    return render(request,'app/line.html',{'form':form,'data':data})
   else:
+   form = StnForm(request.POST)
    data = 'Cannot Add,Invalid Station Timings'
+   return render(request,'app/line.html',{'form':form,'data':data})
  data=''
  form = StnForm()
- return render_to_response('app/line.html',{'form':form,'data':data}, RequestContext(request))
+ return render(request,'app/line.html',{'form':form,'data':data})
 
 def Populate(request):
  data=dict()

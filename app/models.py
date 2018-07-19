@@ -1,5 +1,10 @@
 from django.db import models
 from django.utils import timezone
+from django.core.validators import RegexValidator
+
+alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only Alphanumeric characters are allowed.')
+Calphabets = RegexValidator(r'^[A-Z]*$', 'Only Capital Alphabets are allowed.')
+alphabets = RegexValidator(r'^[a-zA-Z]*$', 'Only Alphabets are allowed.')
 
 class Config(models.Model):
  Status = (
@@ -8,16 +13,16 @@ class Config(models.Model):
   ('On Hold', 'On Hold'),
   ('Completed', 'Completed'),)
  SKU = models.AutoField(primary_key=True)
- model = models.CharField(max_length=6)
- variant = models.CharField(max_length=1)
- color = models.CharField(max_length=20)
+ model = models.CharField(max_length=6,validators=[alphanumeric])
+ variant = models.CharField(max_length=1,validators=[Calphabets])
+ color = models.CharField(max_length=15,validators=[alphabets])
  time = models.PositiveIntegerField(null=True)
  quantity = models.PositiveIntegerField(default=0)
  ratio = models.PositiveIntegerField(default=0)
  skips = models.BooleanField(default=False)
  strips = models.BooleanField(default=False)
- tank = models.CharField(max_length=10)
- description = models.CharField(max_length=50,default=None,blank=True,null=True)
+ tank = models.CharField(max_length=10,validators=[alphabets])
+ description = models.CharField(max_length=25,default=None,blank=True,null=True,validators=[alphabets])
  status = models.CharField(max_length=10, default='Queued', choices=Status)
  stn1 = models.PositiveIntegerField(default=0)
  stn2 = models.PositiveIntegerField(default=0)
