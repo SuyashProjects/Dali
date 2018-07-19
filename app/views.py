@@ -52,7 +52,7 @@ def Edit(request):
    tank=Obj['tank']
    time=Obj['time']
    description=Obj['description']
-   if not (Config.objects.filter(model=model,variant=variant,color=color).exists()):
+   if not Config.objects.filter(model=model,variant=variant,color=color).exists():
     Config.objects.filter(SKU=SKU).update(model=model,variant=variant,color=color,tank=tank,time=time,description=description)
    view=Config.objects.all().values()
    data['sku_list']=render_to_string('app/partial_list.html', {'view': view})
@@ -119,6 +119,11 @@ def Production(request):
    B = Obj['B']
    C = Obj['C']
    Shift.objects.filter(name='Shift').update(A=A,B=B,C=C)
+   form = OrderForm()
+   forms = ShiftForm()
+   data='Successfully changed productive shift times.'
+   view = Config.objects.all().values()
+   return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
   else:
    form = OrderForm()
    forms = ShiftForm(request.POST)
@@ -138,7 +143,7 @@ def Validate(request):
  Total_Shift_Time=sum(Total_Shift_Time)
  Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
  Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
- if(Total_Order>Capacity):
+ if Total_Order>Capacity:
   data['Output'] = 'Capacity is being exceeded, Reduce orders!'
  else:
   data['Output'] = 'Orders are within capacity, Sequence can now be generated!'
@@ -151,8 +156,14 @@ def Sequence(request):
  SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
  if Config.objects.filter(SKU__range=(0,SKU_Count),quantity=0).exists():
   SKU_Count=SKU_Count-1
+ if SKU_Count==0:
+  data='No Orders'
+  Sequence=[]
+  return render(request,'app/sequence.html',{'Sequence':Sequence,'data':data})
  Seq_Q=Seq.objects.all().count()
  forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips','stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
+ New=sub(forsub,Total_Order)
+ Total_Order=len(New)
  tl = forsub.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
  Total_Shift_Time=list(Shift.objects.filter(name='Shift').values_list('A','B','C'))
  Total_Shift_Time=sum(Total_Shift_Time)
@@ -161,20 +172,24 @@ def Sequence(request):
   tSeq=[]
   P2_Obj=[]
   Seq.objects.filter(Sq_No__range=(Total_Order+1,Seq_Q)).delete()
-  sku_ratio = forsub.values_list('SKU','ratio')
-  for x in range(0,Total_Order//Ratio_Sum):
-   for key,value in sku_ratio:
-    for value in range(value):
-     tSeq.append(key)
-  time = main(tSeq,tl,forsub)
+  time = main(New,tl,forsub)
   data = 'Time Taken: ' +str(time)+ ' minutes'
-  for value in tSeq:
-   P2_Obj.append(Config.objects.get(SKU=value))
-  for x in range(0,Total_Order):
-   if not (Seq.objects.filter(Sq_No=x+1).exists()):
-    Seq.objects.create(Sq_No=x+1,SKU=P2_Obj[x])
+  for value in New:
+   if value==0:
+    P2_Obj.append(0)
    else:
-    Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
+    P2_Obj.append(Config.objects.get(SKU=value))
+  for x in range(0,Total_Order):
+   if not Seq.objects.filter(Sq_No=x+1).exists():
+    if P2_Obj[x]==0:
+     Seq.objects.create(Sq_No=x+1)
+    else:
+     Seq.objects.create(Sq_No=x+1,SKU=P2_Obj[x])
+   else:
+    if P2_Obj[x]==0:
+     Seq.objects.filter(Sq_No=x+1).update(SKU='')
+    else:
+     Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
   Sequence=Seq.objects.values('Sq_No','SKU__SKU','SKU__model','SKU__variant','SKU__color','SKU__tank','status')
  else:
   data='Capacity is being exceeded, Reduce orders!'
@@ -188,18 +203,20 @@ def Optimize(request):
   Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
   Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
   forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips','stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10').order_by('color')
+  New=sub(forsub,Total_Order)
   tl = forsub.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')
-  Color_Blocked = forsub.values_list('SKU','ratio')
-  for x in range (0,Total_Order//Ratio_Sum):
-   for key,value in Color_Blocked:
-    for value in range(value):
-     tSeq.append(key)
-  time = main(tSeq,tl,forsub)
+  time = main(New,tl,forsub)
   data = 'Time Taken: ' +str(time)+ ' minutes'
-  for value in tSeq:
-   P3_Obj.append(Config.objects.get(SKU=value))
+  for value in New:
+   if value==0:
+    P3_Obj.append(0)
+   else:
+    P3_Obj.append(Config.objects.get(SKU=value))
   for x in range(0,Total_Order):
-   Seq.objects.filter(Sq_No=x+1).update(SKU=P3_Obj[x])
+   if P3_Obj[x]==0:
+    Seq.objects.filter(Sq_No=x+1).update(SKU='')
+   else:
+    Seq.objects.filter(Sq_No=x+1).update(SKU=P3_Obj[x])
   Sequence=Seq.objects.values('Sq_No','SKU__SKU','SKU__model','SKU__variant','SKU__color','SKU__tank','status')
   return render(request,'app/sequence.html',{'Sequence':Sequence,'data':data})
 
@@ -220,7 +237,7 @@ def Line(request):
   if form.is_valid():
    Obj = form.cleaned_data
    SKU = Obj['SKU']
-   if (Config.objects.filter(SKU=SKU).exists()):
+   if Config.objects.filter(SKU=SKU).exists():
     stn1 = Obj['stn1']
     stn2 = Obj['stn2']
     stn3 = Obj['stn3']
@@ -248,7 +265,7 @@ def Populate(request):
  data=dict()
  stn=[]
  SKU = request.GET.get('sku', None)
- if (Config.objects.filter(SKU=SKU).exists()):
+ if Config.objects.filter(SKU=SKU).exists():
   stn = Config.objects.filter(SKU=SKU).values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')[0]
   for key in stn:
    data = {

@@ -1,9 +1,9 @@
 from numpy import sum,array,amax,zeros,unique
 
-def main(tSeq,tl,forsub):
+def main(New,tl,forsub):
  tSKU=[]
  StnTime=array(tl)
- Seq=array(tSeq)
+ Seq=array(New)
  for key in forsub:
   tSKU.append(key[0])
  SKU=array(tSKU)
@@ -51,6 +51,7 @@ def main(tSeq,tl,forsub):
    Takt_Time=amax(Time)
    print(Takt_Time)
    Total_Time=Total_Time+Takt_Time
+ print(Total_Time)
  return round(Total_Time/60,2)
 
 def sub(forsub,Total_Order):
@@ -66,36 +67,29 @@ def sub(forsub,Total_Order):
   tr.append(key[2])
   tskips.append(key[3])
   tstrips.append(key[4])
- Quants=array(tq)
- Ratio=array(tr)
  SKU=array(tsku)
+ sz=len(tsku)
+ Quants=array(tq)
+ qTemp=array(tq)
+ TQuant=Total_Order
+ Ratio=array(tr)
+ Rtemp=array(tr)
  Skips=array(tskips).astype(int)
  Strips=array(tstrips).astype(int)
- TQuant=sum(Quants)
- Seq=zeros(3*Total_Order)
- sz=len(SKU)
  j=0
- Rtemp=Ratio
- qTemp=Quants
- Stemp=SKU
- S1temp=Skips
- S2temp=Strips
  while(TQuant>0):
   if(j==sz):
    j=0
   elif(qTemp[j]==0):
    j=j+1
   elif((Rtemp[j]>=1) and (qTemp[j]>=1)):
-   ##For Strips
-   if(S2temp[j]==1):
+   if(Strips[j]==1):
     li.append(0)
-   ## For Sequencing
-   li.append(Stemp[j])
+   li.append(SKU[j])
    TQuant=TQuant-1
    Rtemp[j]=Rtemp[j]-1
    qTemp[j]=qTemp[j]-1
-   ##For Skip
-   if(S1temp[j]==1):
+   if(Skips[j]==1):
     li.append(0)
   elif(Rtemp[j]==0):
    Rtemp[j]=Ratio[j]
