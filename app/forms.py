@@ -41,9 +41,9 @@ class OrderForm(forms.ModelForm):
   fields = ('SKU','quantity','ratio','skips','strips')
 
 class ShiftForm(forms.ModelForm):
- A = forms.DecimalField(widget=forms.NumberInput(attrs={'min': 0,'max': 8,'class':'form-control','step': '0.5'}))
- B = forms.DecimalField(widget=forms.NumberInput(attrs={'min': 0,'max': 8,'class':'form-control','step': '0.5'}))
- C = forms.DecimalField(widget=forms.NumberInput(attrs={'min': 0,'max': 8,'class':'form-control','step': '0.5'}))
+ A = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'max': 480,'class':'form-control',}))
+ B = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'max': 480,'class':'form-control',}))
+ C = forms.IntegerField(widget=forms.NumberInput(attrs={'min': 1,'max': 480,'class':'form-control',}))
  class Meta:
   model = Shift
   fields = ('A','B','C',)

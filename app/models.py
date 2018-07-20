@@ -23,7 +23,6 @@ class Config(models.Model):
  strips = models.BooleanField(default=False)
  tank = models.CharField(max_length=10,validators=[alphabets])
  description = models.CharField(max_length=25,default=None,blank=True,null=True,validators=[alphabets])
- status = models.CharField(max_length=10, default='Queued', choices=Status)
  stn1 = models.PositiveIntegerField(default=0)
  stn2 = models.PositiveIntegerField(default=0)
  stn3 = models.PositiveIntegerField(default=0)
@@ -68,9 +67,9 @@ class Seq(models.Model):
 
 class Shift(models.Model):
  name = models.CharField(max_length=5,unique=True)
- A = models.DecimalField(max_digits=5,decimal_places=2,default=7)
- B = models.DecimalField(max_digits=5,decimal_places=2,default=7)
- C = models.DecimalField(max_digits=5,decimal_places=2,default=7)
+ A = models.PositiveIntegerField(default=420)
+ B = models.PositiveIntegerField(default=420)
+ C = models.PositiveIntegerField(default=420)
  def submit(self):
   self.save()
  def __str__(self):

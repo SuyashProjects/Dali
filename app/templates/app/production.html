@@ -80,7 +80,7 @@ PRODUCTION PLAN
   <div class="form-group row">
     <div class="col-xs-3" style="margin-left:15px;margin-top:15px;margin-right:10px;font-size:16px; font-weight:800;">
     Shift Duration:
-    (hrs) Default: 7
+    (minutes) Default: 420
     </div>
     <div class="col-xs-2">
     <label>First Shift</label>
@@ -127,8 +127,7 @@ CURRENT ORDERS
  <div class="table-wrapper-2" style="height:380px;">
 <table class="table table-responsive-md table-bordered">
 <thead class="mdb-color lighten-4" style="background-color:#101669 !important; color:white !important;">
-<tr>
-<th>S.No</th>
+<tr><th class="th-lg">SKU</th>
 <th class="th-lg">Model</th>
 <th class="th-lg">Variant</th>
 <th class="th-lg">Color</th>
@@ -136,11 +135,11 @@ CURRENT ORDERS
 <th class="th-lg">TAKT Time</th>
 <th class="th-lg">Quantity</th>
 <th class="th-lg">Ratio</th>
-</tr>
-</thead>
+<th class="th-lg">Skips</th>
+<th class="th-lg">Strips</th>
+</tr></thead>
 <tbody>
-<tr>
-{% for key in view %}
+<tr>{% for key in view %}
 <td>{{key.SKU}}</td>
 <td>{{key.model}}</td>
 <td>{{key.variant}}</td>
@@ -149,8 +148,9 @@ CURRENT ORDERS
 <td>{{key.time}}</td>
 <td>{{key.quantity}}</td>
 <td>{{key.ratio}}</td>
-</tr>
-{% endfor %}
+<td>{{key.skips}}</td>
+<td>{{key.strips}}</td>
+</tr>{% endfor %}
 </tbody></table>
 </div></div></div>
 
