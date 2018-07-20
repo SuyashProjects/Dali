@@ -21,14 +21,14 @@ def Configuration(request):
    if not (Config.objects.filter(model=model,variant=variant,color=color).exists()):
     form.save()
     form=form.save()
-    data='Sequence SKU added. Go to Line Monitoring to configure station TAKT times.'
+    data='<span style="color:green">Sequence SKU added. Go to Line Monitoring to configure station TAKT times.</span>'
    else:
-    data='This configuration already exists.'
+    data='<span style="color:red">This configuration already exists.</span>'
     form=SKUForm()
     view=Config.objects.all().values()
     return render(request,'app/configuration.html',{'form':form,'data':data,'view':view,})
   else:
-   data='Invalid Configuration'
+   data='<span style="color:red">Invalid Configuration</span>'
    form=SKUForm(request.POST)
    view=Config.objects.all().values()
    return render(request,'app/configuration.html',{'form':form,'data':data,'view':view,})
@@ -98,18 +98,25 @@ def Production(request):
   if form.is_valid():
    Obj = form.cleaned_data
    SKU = Obj['SKU']
-   quantity = Obj['quantity']
-   skips = Obj['skips']
-   strips = Obj['strips']
-   if (bool(Obj.get('ratio', False))):
-    ratio = Obj['ratio']
+   if Config.objects.filter(SKU=SKU).exists():
+    quantity = Obj['quantity']
+    skips = Obj['skips']
+    strips = Obj['strips']
+    if (bool(Obj.get('ratio', False))):
+     ratio = Obj['ratio']
+    else:
+     ratio = Obj['quantity']
+    Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio,skips=skips,strips=strips)
    else:
-    ratio = Obj['quantity']
-   Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio,skips=skips,strips=strips)
+    form = OrderForm(request.POST)
+    forms = ShiftForm()
+    data='<span style="color:red">SKU does not exist.</span>'
+    view = Config.objects.all().values()
+    return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
   else:
    form = OrderForm(request.POST)
    forms = ShiftForm()
-   data='Invalid Order.'
+   data='<span style="color:red">Invalid Order.</span>'
    view = Config.objects.all().values()
    return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
  elif 'shift' in request.POST:
@@ -122,13 +129,13 @@ def Production(request):
    Shift.objects.filter(name='Shift').update(A=A,B=B,C=C)
    form = OrderForm()
    forms = ShiftForm()
-   data='Successfully changed productive shift times.'
+   data='<span style="color:green">Successfully changed productive shift times.</span>'
    view = Config.objects.all().values()
    return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
   else:
    form = OrderForm()
    forms = ShiftForm(request.POST)
-   data='Invalid Shift Timings.'
+   data='<span style="color:red">Invalid Shift Timings.</span>'
    view = Config.objects.all().values()
    return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
  form = OrderForm()
@@ -145,9 +152,9 @@ def Validate(request):
  Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
  Capacity=((Total_Shift_Time*3600)/Line_Takt_Time)
  if Total_Order>Capacity:
-  data['Output'] = 'Capacity is being exceeded, Reduce orders!'
+  data['Output'] = '<span style="color:red">Capacity is being exceeded, Reduce orders!</span>'
  else:
-  data['Output'] = 'Orders are within capacity, Sequence can now be generated!'
+  data['Output'] = '<span style="color:green">Orders are within capacity, Sequence can now be generated!</span>'
  return JsonResponse(data)
 
 def Sequence(request):
@@ -193,7 +200,7 @@ def Sequence(request):
      Seq.objects.filter(Sq_No=x+1).update(SKU=P2_Obj[x])
   Sequence=Seq.objects.values('Sq_No','SKU__SKU','SKU__model','SKU__variant','SKU__color','SKU__tank','status')
  else:
-  data='Capacity is being exceeded, Reduce orders!'
+  data='<span style="color:red">Capacity is being exceeded, Reduce orders!<span>'
   Sequence=[]
   return render(request,'app/sequence.html',{'Sequence':Sequence,'data':data})
  return render(request,'app/sequence.html',{'Sequence':Sequence,'data':data})
@@ -252,11 +259,11 @@ def Line(request):
     Config.objects.filter(SKU=SKU).update(stn1=stn1,stn2=stn2,stn3=stn3,stn4=stn4,stn5=stn5,stn6=stn6,stn7=stn7,stn8=stn8,stn9=stn9,stn10=stn10)
    else:
     form = StnForm(request.POST)
-    data = 'SKU does not exist.'
+    data = '<span style="color:red">SKU does not exist.</span>'
     return render(request,'app/line.html',{'form':form,'data':data})
   else:
    form = StnForm(request.POST)
-   data = 'Cannot Add,Invalid Station Timings'
+   data = '<span style="color:red">Cannot Add,Invalid Station Timings</span>'
    return render(request,'app/line.html',{'form':form,'data':data})
  data=''
  form = StnForm()
@@ -280,8 +287,8 @@ def Populate(request):
    'stn8' : stn[7],
    'stn9' : stn[8],
    'stn10' : stn[9],
-   'Output' : 'Success!'
+   'Output' : '<span style="color:green">Success!</span>'
    }
  else:
-  data['Output'] = 'SKU does not exist.'
+  data['Output'] = '<span style="color:red">SKU does not exist.</span>'
  return JsonResponse(data)
