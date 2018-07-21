@@ -54,6 +54,9 @@ def Edit(request):
    description=Obj['description']
    if Config.objects.filter(SKU=SKU).exists():
     Config.objects.filter(SKU=SKU).update(model=model,variant=variant,color=color,tank=tank,time=time,description=description,stn1=time,stn2=time,stn3=time,stn4=time,stn5=time,stn6=time,stn7=time,stn8=time,stn9=time,stn10=time)
+    data['Output']='<span style="color:green">Successfully Changed SKU</span>'
+   else:
+    data['Output']='<span style="color:red">SKU does not exist.</span>'
    view=Config.objects.all().values('SKU','model','variant','color','tank','time','description')
    data['sku_list']=render_to_string('app/partial_list.html', {'view': view})
   else:
@@ -78,6 +81,9 @@ def Delete(request):
    SKU=Obj['SKU']
    if Config.objects.filter(SKU=SKU).exists():
     Config.objects.filter(SKU=SKU).delete()
+    data['Output']='<span style="color:green">Successfully Deleted SKU</span>'
+   else:
+    data['Output']='<span style="color:red">SKU does not exist.</span>'
    view = Config.objects.all().values('SKU','model','variant','color','tank','time','description')
    data['sku_list'] = render_to_string('app/partial_list.html', {'view': view})
   else:
@@ -107,6 +113,11 @@ def Production(request):
     else:
      ratio = Obj['quantity']
     Config.objects.filter(SKU=SKU).update(quantity=quantity,ratio=ratio,skips=skips,strips=strips)
+    form = OrderForm()
+    forms = ShiftForm()
+    data='Success.'
+    view = Config.objects.all().values('SKU','model','variant','color','tank','time','quantity','ratio','skips','strips')
+    return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
    else:
     form = OrderForm(request.POST)
     forms = ShiftForm()
@@ -140,7 +151,7 @@ def Production(request):
    return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
  form = OrderForm()
  forms = ShiftForm()
- data =''
+ data ='Quantity=0 refers to as no order.'
  view = Config.objects.all().values('SKU','model','variant','color','tank','time','quantity','ratio','skips','strips')
  return render(request,'app/production.html',{'form':form,'forms':forms,'data':data,'view':view})
 
@@ -159,7 +170,6 @@ def Validate(request):
 
 def Sequence(request):
  Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
- Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
  Line_Takt_Time = list(Config.objects.aggregate(Max('time')).values())[0]
  SKU_Count=list(Config.objects.aggregate(Count('SKU')).values())[0]
  if Config.objects.filter(SKU__range=(0,SKU_Count),quantity=0).exists():
@@ -177,7 +187,6 @@ def Sequence(request):
  Total_Shift_Time=sum(Total_Shift_Time)
  Capacity=((Total_Shift_Time*60)/Line_Takt_Time)
  if(Total_Order<Capacity):
-  tSeq=[]
   P2_Obj=[]
   Seq.objects.filter(Sq_No__range=(Total_Order+1,Seq_Q)).delete()
   time = main(Sequence,tl,forsub)
@@ -206,10 +215,8 @@ def Sequence(request):
  return render(request,'app/sequence.html',{'Sequence':Sequence,'data':data})
 
 def Optimize(request):
-  tSeq=[]
   P3_Obj=[]
   Total_Order=list(Config.objects.aggregate(Sum('quantity')).values())[0]
-  Ratio_Sum=list(Config.objects.aggregate(Sum('ratio')).values())[0]
   forsub = Config.objects.exclude(quantity=0).values_list('SKU','quantity','ratio','skips','strips','stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10').order_by('color')
   Sequence=sub(forsub,Total_Order)
   tl = forsub.values_list('stn1','stn2','stn3','stn4','stn5','stn6','stn7','stn8','stn9','stn10')

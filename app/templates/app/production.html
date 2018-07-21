@@ -138,8 +138,8 @@ CURRENT ORDERS
 <th class="th-lg">Skips</th>
 <th class="th-lg">Strips</th>
 </tr></thead>
-<tbody>
-<tr>{% for key in view %}
+<tbody id="tbody"><tr>
+{% for key in view %}
 <td>{{key.SKU}}</td>
 <td>{{key.model}}</td>
 <td>{{key.variant}}</td>
@@ -237,6 +237,7 @@ $(function () {
           success: function (data) {
           if (data.form_is_valid) {
             $("#tbody").html(data.sku_list);
+            $("#ticker").html(data['Output']);
               $("#modaldelete").modal("hide");
             }
           else {
